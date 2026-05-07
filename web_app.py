@@ -41,8 +41,8 @@ def chat():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        data = request.json or {}
-        message = data.get("message", "")
+        data = request.get_json(force=True, silent=True) or {}
+        message = data.get("message", "").strip()
 
         if not message:
             return jsonify({"error": "No message provided"}), 400
@@ -68,8 +68,8 @@ def content():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        data = request.json or {}
-        topic = data.get("topic", "")
+        data = request.get_json(force=True, silent=True) or {}
+        topic = data.get("topic", "").strip()
 
         if not topic:
             return jsonify({"error": "No topic provided"}), 400
