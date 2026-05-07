@@ -1,8 +1,15 @@
 import os
 import sys
+import logging
 from flask import Flask, render_template, request, jsonify
-import traceback
 from werkzeug.exceptions import BadRequest
+
+# Setup structured logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Force local directory import safety
 sys.path.append(os.path.dirname(__file__))
@@ -19,40 +26,24 @@ app = Flask(
     static_folder="my-local-ai/static"
 )
 
-
-# -------------------------
-# CUSTOM WSGI MIDDLEWARE
-# -------------------------
-class DebugMiddleware:
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        print(f"\n=== RAW WSGI REQUEST ===")
-        print(f"Method: {environ.get('REQUEST_METHOD')}")
-        print(f"Path: {environ.get('PATH_INFO')}")
-        print(f"Content-Type: {environ.get('CONTENT_TYPE')}")
-        print(f"Content-Length: {environ.get('CONTENT_LENGTH')}")
-        print(f"=== END RAW ===\n")
-        return self.app(environ, start_response)
-
-
-app.wsgi_app = DebugMiddleware(app.wsgi_app)
-
+# Disable Flask's default logger
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARNING)
 
 try:
     ai = AIInterface()
+    logger.info("AI Interface initialized successfully")
 except Exception as e:
-    print(f"Warning: AI Interface failed to initialize: {e}")
+    logger.warning(f"AI Interface failed to initialize: {e}")
     ai = None
 
 
 # -------------------------
-# GLOBAL ERROR HANDLER
+# GLOBAL ERROR HANDLERS
 # -------------------------
 @app.errorhandler(BadRequest)
 def handle_bad_request(e):
-    print(f"BadRequest caught: {e}")
+    logger.error(f"Bad request: {e}")
     return jsonify({
         "error": "Bad request",
         "message": str(e)
@@ -61,40 +52,27 @@ def handle_bad_request(e):
 
 @app.errorhandler(400)
 def handle_400(e):
-    print(f"400 caught: {e}")
+    logger.error(f"400 error: {e}")
     return jsonify({
-        "error": "Bad request",
-        "message": str(e)
+        "error": "Bad request"
     }), 400
 
 
 @app.errorhandler(500)
 def handle_500(e):
-    print(f"500 caught: {e}")
-    traceback.print_exc()
+    logger.error(f"500 error: {e}")
     return jsonify({
-        "error": "Internal server error",
-        "message": str(e)
+        "error": "Internal server error"
     }), 500
 
 
 # -------------------------
 # REQUEST LOGGING
 # -------------------------
-@app.before_request
-def log_request_info():
-    print(f"\n=== FLASK BEFORE_REQUEST ===")
-    print(f"Method: {request.method}")
-    print(f"Path: {request.path}")
-    print(f"Content-Type: {request.content_type}")
-    print(f"Content-Length: {request.content_length}")
-    if request.method in ['POST', 'PUT']:
-        try:
-            body = request.get_data(as_text=True)
-            print(f"Body: {body}")
-        except Exception as e:
-            print(f"Could not read body: {e}")
-    print(f"=== END BEFORE_REQUEST ===\n")
+@app.after_request
+def log_request(response):
+    logger.info(f"{request.method} {request.path} - {response.status_code}")
+    return response
 
 
 # -------------------------
@@ -106,40 +84,32 @@ def home():
 
 
 # -------------------------
-# CHAT ENDPOINT (MAIN AI PIPE)
+# CHAT ENDPOINT
 # -------------------------
 @app.route("/api/chat", methods=["POST"])
 def chat():
     try:
-        print("=== INSIDE CHAT ROUTE ===")
-        
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
         data = request.get_json(silent=True)
-        print(f"JSON data: {data}")
         
         if data is None:
             return jsonify({"error": "Invalid or missing JSON"}), 400
 
         message = data.get("message", "").strip()
-        print(f"Message: {message}")
 
         if not message:
             return jsonify({"error": "No message provided"}), 400
 
+        logger.info(f"Chat request: {message[:50]}")
         response = ai.chat(message)
 
-        return jsonify({
-            "response": response
-        })
+        return jsonify({"response": response})
 
     except Exception as e:
-        print(f"Chat exception: {e}")
-        traceback.print_exc()
-        return jsonify({
-            "error": str(e)
-        }), 500
+        logger.error(f"Chat error: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
 
 
 # -------------------------
@@ -161,18 +131,14 @@ def content():
         if not topic:
             return jsonify({"error": "No topic provided"}), 400
 
+        logger.info(f"Content request: {topic}")
         response = ai.generate_content_pack(topic)
 
-        return jsonify({
-            "response": response
-        })
+        return jsonify({"response": response})
 
     except Exception as e:
-        print(f"Content error: {e}")
-        traceback.print_exc()
-        return jsonify({
-            "error": str(e)
-        }), 500
+        logger.error(f"Content error: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
 
 
 # -------------------------
@@ -185,6 +151,7 @@ def memory_sidebar():
             return jsonify({"error": "AI interface not initialized"}), 503
         return jsonify(ai.get_stats())
     except Exception as e:
+        logger.error(f"Memory sidebar error: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
@@ -200,15 +167,12 @@ def health():
 
 
 # -------------------------
-# RUN SERVER
+# RUN SERVER (development only)
 # -------------------------
 if __name__ == "__main__":
-    print("🔥 Orion Browser Stable Running")
-    print("👉 http://0.0.0.0:8000")
-
+    logger.info("Starting Orion application")
     app.run(
         debug=False,
         host="0.0.0.0",
-        port=8000,
-        threaded=True
+        port=8000
     )
