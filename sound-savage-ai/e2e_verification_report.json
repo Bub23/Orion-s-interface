@@ -1,0 +1,29 @@
+{
+  "test_date": "2026-05-07T15:33:32.836124",
+  "input": "I lost everything and rebuilt my life through AI music and hustle",
+  "stages_passed": 5,
+  "idea": {
+    "category": "hustle",
+    "viral_score": 0.86
+  },
+  "hooks": {
+    "count": 8,
+    "types": [
+      "authority",
+      "story",
+      "confession",
+      "shock",
+      "revelation"
+    ]
+  },
+  "script": {
+    "duration": 45,
+    "sections": 4
+  },
+  "analytics": {
+    "viral_score": 30.0,
+    "tier": "high",
+    "high_performer": true
+  },
+  "learning_triggered": true
+}

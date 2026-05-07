@@ -1,0 +1,67 @@
+# Orion TikTok Integration Setup
+
+## What You Need to Input
+
+### 1. TikTok API Credentials
+Get these from: https://developer.tiktok.com/
+
+```
+TIKTOK_CLIENT_ID=your_client_id_here
+TIKTOK_CLIENT_SECRET=your_client_secret_here
+TIKTOK_ACCESS_TOKEN=your_access_token_here
+```
+
+### 2. Basic ToS & Privacy URLs (required for app review)
+Use these placeholder URLs or replace with your own:
+
+**Terms of Service:**
+```
+https://example.com/terms-of-service
+```
+
+**Privacy Policy:**
+```
+https://example.com/privacy-policy
+```
+
+### 3. TikTok App Review - Fill Out Online Form
+
+At https://developer.tiktok.com/app/application-management
+
+**App Name:** Orion Content Engine
+**Description:** 
+"Orion is an AI content creation and automation platform that uses TikTok's Content Posting API to help creators generate, schedule, and post short-form video content. Users can input content ideas, and Orion generates optimized TikTok captions and posts them directly to their TikTok account via the API."
+
+**Platforms:** Web
+**Products:** Content Posting API, Display API
+**Scopes:** video.upload, user.info.basic
+
+---
+
+## Quick Setup
+
+1. Copy your TikTok credentials into `.env`:
+
+```
+TIKTOK_CLIENT_ID=...
+TIKTOK_CLIENT_SECRET=...
+TIKTOK_ACCESS_TOKEN=...
+```
+
+2. Run Flask:
+```
+python app.py
+```
+
+3. Test TikTok connection:
+```
+http://localhost:5000/api/tiktok/test
+```
+
+4. Post to TikTok:
+```
+POST http://localhost:5000/api/tiktok/post
+Body: {"caption": "Your caption here", "video_url": "https://..."}
+```
+
+That's it. System will handle the rest.

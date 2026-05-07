@@ -1,0 +1,51 @@
+{
+  "memories": [
+    {
+      "memory_id": "AUTO_0",
+      "type": "preference",
+      "title": "So i believe i got 5 % of your memory uploaded im ",
+      "memory": "So i believe i got 5 % of your memory uploaded im waiting on the chat gpt export im working on it brother",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ]
+    },
+    {
+      "memory_id": "AUTO_20260505_1",
+      "type": "mission",
+      "title": "remember my goal is to build Orion into an AGI command cente",
+      "memory": "remember my goal is to build Orion into an AGI command center",
+      "emotion": [],
+      "why_it_matters": "Explicitly stated by the user during conversation.",
+      "orion_directive": "",
+      "priority": 4,
+      "tags": [
+        "agi-core",
+        "conversation"
+      ],
+      "created_at": "2026-05-05T05:57:17.051575",
+      "access_count": 2
+    },
+    {
+      "memory_id": "AUTO_20260505_2",
+      "type": "preference",
+      "title": "build Orion into an AGI command center",
+      "memory": "build Orion into an AGI command center",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ],
+      "created_at": "2026-05-05T06:00:48.631500",
+      "access_count": 0
+    }
+  ],
+  "global_behavior_rules": []
+}

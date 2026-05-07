@@ -1,0 +1,68 @@
+{
+  "memories": [
+    {
+      "memory_id": "AUTO_0",
+      "type": "preference",
+      "title": "So i believe i got 5 % of your memory uploaded im ",
+      "memory": "So i believe i got 5 % of your memory uploaded im waiting on the chat gpt export im working on it brother",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ],
+      "access_count": 1
+    },
+    {
+      "memory_id": "AUTO_20260505_1",
+      "type": "mission",
+      "title": "remember my goal is to build Orion into an AGI command cente",
+      "memory": "remember my goal is to build Orion into an AGI command center",
+      "emotion": [],
+      "why_it_matters": "Explicitly stated by the user during conversation.",
+      "orion_directive": "",
+      "priority": 4,
+      "tags": [
+        "agi-core",
+        "conversation"
+      ],
+      "created_at": "2026-05-05T05:57:17.051575",
+      "access_count": 3
+    },
+    {
+      "memory_id": "AUTO_20260505_2",
+      "type": "preference",
+      "title": "build Orion into an AGI command center",
+      "memory": "build Orion into an AGI command center",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ],
+      "created_at": "2026-05-05T06:00:48.631500",
+      "access_count": 1
+    },
+    {
+      "memory_id": "AUTO_20260505_3",
+      "type": "preference",
+      "title": "SOUND SAVAGE AI \u2013 PITCH DECK  The first-ever fully",
+      "memory": "SOUND SAVAGE AI \u2013 PITCH DECK  The first-ever fully AI-powered, brutally competitive, outlaw-built music label in app form.   ---  \ud83c\udfaf What Is Sound Savage AI?  Sound Savage AI is a ruthless, high-performance, AI-powered artist engine and music label that replaces every broken part of the industry with machines, creativity, and pure grind.  From beat creation to full-length video production, it\u2019s built to coach, test, evolve, and sign the strongest underground artists \u2014 no fluff, no participation trophies.   ---  \ud83e\uddf1 USER PROGRESSION SYSTEM  Ranks:  1. Newbie Lyricist   2. Technical Lyricist   3. Master Lyricist   4. Fire Lyricist    You climb by:  Submitting verses  Winning battles  Climbing Reaper Radio rankings  Unlocking new features    ---  \ud83d\udee0\ufe0f FULL AI TOOL LINEUP   ---  1. Reaper Beat Forage Custom beat generator. User picks genre, BPM, mood (aggressive, chill, trap, etc.) AI instantly generates a unique beat.   ---  2. Ghostwriter Booth + AI Coach Write your bars and get coached by the Reaper AI. Choose your vibe: Ruthless, Pain, Savage, Heartbreak AI grades your structure, delivery, and wordplay.   ---  3. Battle The Reaper Face off against the bot. Bot drops 8 bars first \u2014 you respond with your own. AI judge decides the winner \u2014 no bias, no favors.   ---  4. Reaper Flow Forage Train cadence, rhythm, breath control. AI analyzes timing and shows where to tighten up. Built to make amateurs sound elite.   ---  5. Full Song Construction + Coaching Put together a complete track: Hook \u2192 Verse \u2192 Chorus AI helps with structure, pacing, delivery tone, and polish. Final song can be submitted to Reaper Radio.   ---  6. Reaper Radio (Weekly Competition) Top 100 \u2192 50 \u2192 25 \u2192 10 \u2192 Final 5 every week Real users vote \u2014 no fake accounts Top 5 get access to music video and featured artist tools.   ---  7. Featured Artist Generator Lock in your artist identity. Create your name, voice, style, image, brand. Learn how to market, build merch, and roll out your career.   ---  8. Interactive AI Music Video Generator Generate a full-length high-quality video. Use your AI avatar and/or voice clone Choose scenes (barn, bar, graveyard, trailer, woods, etc.) Elite visuals. Affordable access. Full export included.   ---  9. The Reaper Vault Exclusive toolset only unlocked by high-ranking users. Includes unreleased verses, rare beats, deleted content, and high-end music tools.   ---  \ud83d\udd10 SECURITY & ANTI-FAKE FEATURES  \u2022 Must be 18+ to join (DOB required) \u2022 Email, artist name, and label required \u2022 7-day free trial, then subscription (weekly, monthly, annual) \u2022 One device = one vote = one user \u2022 No fake plays, no inflated stats, no cheating \u2022 Only paid users can vote or compete in battles   ---  \ud83d\udcb0 MONETIZATION MODEL  \u2022 One-week free trial \u2022 Subscription options: \u2013 Weekly: $7.99 \u2013 Monthly: $19.99 \u2013 Annual: $149 \u2022 Payments via Stripe or PayPal \u2022 AI tools limited after trial unless subscribed \u2022 Vault, battles, and Reaper Radio entry require subscription or rank   ---  \ud83e\udde0 THE MISSION  To replace traditional record labels with an AI-powered, creator-owned, battle-hardened system that builds real careers based on skill \u2014 not clout.  If you win here, it\u2019s because you outworked the rest \u2014 not because you kissed the ring.  > \u201cIf you make it here, you're ready for the Reaper.\u201d \u2013 BUB OUTLAW     ---",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ],
+      "created_at": "2026-05-05T20:23:46.262263",
+      "access_count": 0
+    }
+  ],
+  "global_behavior_rules": []
+}

@@ -1,0 +1,145 @@
+version: '3.9'
+
+services:
+  # FastAPI application
+  api:
+    build: .
+    container_name: sound-savage-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/sound_savage
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sound-savage-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # PostgreSQL database
+  db:
+    image: postgres:15
+    container_name: sound-savage-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sound_savage
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sound-savage-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis message broker
+  redis:
+    image: redis:7-alpine
+    container_name: sound-savage-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - sound-savage-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Celery worker: Content pipeline
+  worker-pipeline:
+    build: .
+    container_name: sound-savage-worker-pipeline
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/sound_savage
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app worker -Q content_pipeline --loglevel=info --concurrency=2
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sound-savage-net
+
+  # Celery worker: Render
+  worker-render:
+    build: .
+    container_name: sound-savage-worker-render
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/sound_savage
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app worker -Q render --loglevel=info --concurrency=1
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sound-savage-net
+
+  # Celery worker: Analytics
+  worker-analytics:
+    build: .
+    container_name: sound-savage-worker-analytics
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/sound_savage
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app worker -Q analytics --loglevel=info --concurrency=2
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sound-savage-net
+
+  # Celery Flower (monitoring)
+  flower:
+    build: .
+    container_name: sound-savage-flower
+    restart: always
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app flower --port=5555
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sound-savage-net
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  sound-savage-net:
+    driver: bridge

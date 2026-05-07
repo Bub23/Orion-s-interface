@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Orion">
+    <title>Orion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Desktop layout */
+        .sidebar {
+            width: 260px;
+            background: #1a1a1a;
+            border-right: 2px solid #cc0000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 2px solid #cc0000;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%);
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.3rem;
+            color: #ff3333;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+        
+        .sidebar-stats {
+            font-size: 0.85rem;
+            color: #999;
+        }
+        
+        .sidebar-stats div {
+            margin-bottom: 6px;
+        }
+        
+        .sidebar-stats strong {
+            color: #ff3333;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: #cc0000;
+            border-radius: 3px;
+        }
+        
+        .memory-category {
+            margin-bottom: 20px;
+        }
+        
+        .memory-category-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ff3333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #cc0000;
+        }
+        
+        .memory-item {
+            font-size: 0.8rem;
+            color: #bbb;
+            padding: 8px;
+            background: #222;
+            border-left: 2px solid #cc0000;
+            border-radius: 2px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .memory-item:hover {
+            background: #2a0000;
+            color: #ff3333;
+            border-left: 3px solid #ff3333;
+            padding-left: 7px;
+        }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #cc0000;
+            border-radius: 4px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message.orion {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        .user .message-content {
+            background: linear-gradient(135deg, #cc0000 0%, #ff3333 100%);
+            color: #fff;
+            border: 1px solid #ff3333;
+        }
+        
+        .orion .message-content {
+            background: #1a1a1a;
+            color: #ddd;
+            border: 1px solid #cc0000;
+        }
+        
+        .emotion-tag {
+            font-size: 0.7rem;
+            color: #ff3333;
+            margin-top: 6px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        .input-area {
+            padding: 20px;
+            border-top: 2px solid #cc0000;
+            background: #1a1a1a;
+            flex-shrink: 0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #cc0000;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #222;
+            color: #fff;
+            transition: all 0.2s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff3333;
+            background: #2a0000;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.3);
+        }
+        
+        input[type="text"]::placeholder {
+            color: #666;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #cc0000 0%, #ff3333 100%);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-height: 48px;
+        }
+        
+        button:hover {
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .loading {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .loading span {
+            width: 8px;
+            height: 8px;
+            background: #ff3333;
+            border-radius: 50%;
+            animation: pulse 1.4s infinite;
+        }
+        
+        .loading span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .loading span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes pulse {
+            0%, 60%, 100% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 1;
+            }
+        }
+        
+        .memory-notification {
+            font-size: 0.75rem;
+            color: #ff6666;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .cognition-panel {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 51, 51, 0.35);
+            font-size: 0.72rem;
+            color: #aaa;
+        }
+
+        .cognition-panel strong {
+            color: #ff6666;
+        }
+
+        .cognition-tools {
+            margin-top: 4px;
+            color: #ccc;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            text-align: center;
+        }
+        
+        .empty-state h2 {
+            font-size: 2rem;
+            color: #ff3333;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+        }
+        
+        .empty-state p {
+            font-size: 0.95rem;
+            color: #999;
+        }
+        
+        .no-memories-state {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            padding: 20px 10px;
+        }
+        
+        /* MOBILE LAYOUT */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #cc0000;
+                max-height: 80px;
+                flex-direction: row;
+            }
+            
+            .sidebar-header {
+                padding: 15px;
+                border-bottom: none;
+                border-right: 2px solid #cc0000;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 1rem;
+                margin-bottom: 4px;
+            }
+            
+            .sidebar-stats {
+                font-size: 0.75rem;
+            }
+            
+            .sidebar-stats div {
+                margin-bottom: 2px;
+            }
+            
+            .sidebar-content {
+                padding: 10px 15px;
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+            }
+            
+            .memory-category {
+                margin-bottom: 0;
+                min-width: 150px;
+            }
+            
+            .memory-category-title {
+                font-size: 0.7rem;
+                margin-bottom: 4px;
+                padding-bottom: 2px;
+            }
+            
+            .memory-item {
+                font-size: 0.7rem;
+                padding: 6px;
+                margin-bottom: 4px;
+            }
+            
+            .main {
+                flex: 1;
+            }
+            
+            .chat-container {
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+                padding: 10px 14px;
+                font-size: 0.95rem;
+            }
+            
+            .input-area {
+                padding: 15px;
+            }
+            
+            .input-container {
+                gap: 8px;
+            }
+            
+            input[type="text"] {
+                padding: 10px 14px;
+                font-size: 16px;
+                min-height: 44px;
+            }
+            
+            button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+            
+            .empty-state h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar-header h1 {
+                font-size: 0.9rem;
+            }
+            
+            .chat-container {
+                padding: 12px;
+                gap: 10px;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .input-area {
+                padding: 12px;
+            }
+            
+            .input-container {
+                gap: 6px;
+            }
+            
+            input[type="text"] {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>🧠 ORION</h1>
+            <div class="sidebar-stats" id="sidebar-stats">
+                <div>Memories: <strong id="total-memories">0</strong></div>
+            </div>
+        </div>
+        
+        <div class="sidebar-content" id="sidebar-content">
+            <div class="no-memories-state">Start chatting to file memories</div>
+        </div>
+    </div>
+    
+    <!-- MAIN CHAT AREA -->
+    <div class="main">
+        <div class="chat-container" id="chat-container">
+            <div class="empty-state">
+                <h2>ORION</h2>
+                <p>Your AI with persistent memory</p>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <div class="input-container">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Talk to Orion..."
+                    autocomplete="off"
+                >
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const sidebarContent = document.getElementById('sidebar-content');
+        const totalMemoriesSpan = document.getElementById('total-memories');
+        
+        // Load memories on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar();
+            messageInput.focus();
+            
+            // Enter to send
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Prevent zoom on double tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                let now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        });
+        
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            messageInput.value = '';
+            addMessageToChat('user', message);
+            showLoading();
+            
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message})
+            })
+            .then(r => r.json())
+            .then(data => {
+                removeLoading();
+                addMessageToChat('orion', data.response, data.emotion, data.cognition);
+                
+                if (data.auto_memory_filed?.filed) {
+                    addMemoryNotification(data.auto_memory_filed);
+                }
+                
+                loadSidebar();
+                messageInput.focus();
+            })
+            .catch(err => {
+                removeLoading();
+                addMessageToChat('orion', 'Error connecting to Orion.');
+                console.error(err);
+            });
+        }
+        
+        function addMessageToChat(sender, text, emotion = null, cognition = null) {
+            const emptyState = chatContainer.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = text;
+            
+            if (emotion && sender === 'orion') {
+                const emotionTag = document.createElement('div');
+                emotionTag.className = 'emotion-tag';
+                emotionTag.textContent = `💭 ${emotion}`;
+                content.appendChild(emotionTag);
+            }
+
+            if (cognition && sender === 'orion') {
+                const panel = document.createElement('div');
+                panel.className = 'cognition-panel';
+
+                const intent = document.createElement('div');
+                intent.innerHTML = `<strong>Intent:</strong> ${escapeHtml(cognition.intent || 'general')}`;
+                panel.appendChild(intent);
+
+                const tools = document.createElement('div');
+                tools.className = 'cognition-tools';
+                tools.innerHTML = `<strong>Tools:</strong> ${escapeHtml((cognition.tools || []).join(', ') || 'self_check')}`;
+                panel.appendChild(tools);
+
+                const score = cognition.reflection?.score;
+                if (score !== undefined) {
+                    const reflection = document.createElement('div');
+                    reflection.innerHTML = `<strong>Self-check:</strong> ${Math.round(score * 100)}%`;
+                    panel.appendChild(reflection);
+                }
+
+                content.appendChild(panel);
+            }
+            
+            messageDiv.appendChild(content);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function addMemoryNotification(memData) {
+            const lastMessage = chatContainer.lastElementChild;
+            if (!lastMessage) return;
+            
+            const notif = document.createElement('div');
+            notif.className = 'memory-notification';
+            notif.textContent = `💾 Filed: ${memData.type}`;
+            lastMessage.appendChild(notif);
+        }
+        
+        function showLoading() {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message orion';
+            messageDiv.id = 'loading-message';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content loading';
+            content.innerHTML = '<span></span><span></span><span></span>';
+            
+            messageDiv.appendChild(content);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function removeLoading() {
+            const loading = document.getElementById('loading-message');
+            if (loading) loading.remove();
+        }
+        
+        function loadSidebar() {
+            fetch('/api/memories/sidebar')
+                .then(r => r.json())
+                .then(data => {
+                    totalMemoriesSpan.textContent = data.total_memories;
+                    
+                    let html = '';
+                    
+                    if (Object.keys(data.categories).length === 0) {
+                        html = '<div class="no-memories-state">Start chatting</div>';
+                    } else {
+                        for (const [category, memories] of Object.entries(data.categories)) {
+                            if (memories.length === 0) continue;
+                            
+                            html += `
+                                <div class="memory-category">
+                                    <div class="memory-category-title">${category}</div>
+                            `;
+                            
+                            memories.forEach(mem => {
+                                html += `<div class="memory-item" title="${mem.memory}">${mem.title.substring(0, 30)}</div>`;
+                            });
+                            
+                            html += '</div>';
+                        }
+                    }
+                    
+                    sidebarContent.innerHTML = html;
+                });
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+    </script>
+</body>
+</html>

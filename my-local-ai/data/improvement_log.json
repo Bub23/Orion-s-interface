@@ -1,0 +1,67 @@
+{
+  "iterations": [
+    {
+      "timestamp": "2026-05-05T05:59:04.326745",
+      "task_type": "build",
+      "output_sample": "Orion's API brain is not connected yet, but the local cognition layer is active.\n\nIntent: build\nTools selected: execution_planner, memory_writer, self_check\nRisks: none\n\nWorking plan:\n1. Parse the use",
+      "metrics": {
+        "accuracy": 100,
+        "completeness": 100,
+        "speed": 85,
+        "usefulness": 100,
+        "notes": "self-check passed"
+      },
+      "score": 96.25
+    },
+    {
+      "timestamp": "2026-05-05T06:00:53.656692",
+      "task_type": "build",
+      "output_sample": "Orion's API brain is not connected yet, but the local cognition layer is active.\n\nIntent: build\nTools selected: execution_planner, self_check\nRisks: none\n\nWorking plan:\n1. Parse the user's real object",
+      "metrics": {
+        "accuracy": 100,
+        "completeness": 100,
+        "speed": 85,
+        "usefulness": 100,
+        "notes": "self-check passed"
+      },
+      "score": 96.25
+    },
+    {
+      "timestamp": "2026-05-05T20:23:54.326296",
+      "task_type": "creative",
+      "output_sample": "Orion's API brain is not connected yet, but the local cognition layer is active.\n\nIntent: creative\nTools selected: personality_modes, execution_planner, web_search, image_generation, self_check\nRisks:",
+      "metrics": {
+        "accuracy": 100,
+        "completeness": 100,
+        "speed": 85,
+        "usefulness": 100,
+        "notes": "self-check passed"
+      },
+      "score": 96.25
+    }
+  ],
+  "best_strategies": {
+    "build": {
+      "score": 96.25,
+      "approach": "Orion's API brain is not connected yet, but the local cognition layer is active.\n\nIntent: build\nTools selected: execution_planner, memory_writer, self_check\nRisks: none\n\nWorking plan:\n1. Parse the use",
+      "metrics": {
+        "accuracy": 100,
+        "completeness": 100,
+        "speed": 85,
+        "usefulness": 100,
+        "notes": "self-check passed"
+      }
+    },
+    "creative": {
+      "score": 96.25,
+      "approach": "Orion's API brain is not connected yet, but the local cognition layer is active.\n\nIntent: creative\nTools selected: personality_modes, execution_planner, web_search, image_generation, self_check\nRisks:",
+      "metrics": {
+        "accuracy": 100,
+        "completeness": 100,
+        "speed": 85,
+        "usefulness": 100,
+        "notes": "self-check passed"
+      }
+    }
+  }
+}

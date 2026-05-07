@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Savage AI - War Room Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #aaa;
+        }
+        
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #555;
+            background: #222;
+        }
+        
+        .card h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .status-viral {
+            background: #ff0000;
+            color: #fff;
+        }
+        
+        .status-mid {
+            background: #ffaa00;
+            color: #fff;
+        }
+        
+        .status-dead {
+            background: #333;
+            color: #aaa;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            grid-column: 1 / -1;
+        }
+        
+        .perf-box {
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid;
+        }
+        
+        .perf-box.viral {
+            border-left-color: #ff0000;
+        }
+        
+        .perf-box.mid {
+            border-left-color: #ffaa00;
+        }
+        
+        .perf-box.dead {
+            border-left-color: #333;
+        }
+        
+        .perf-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .perf-label {
+            color: #aaa;
+            font-size: 0.85em;
+        }
+        
+        .drop-button {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #ff0000, #aa0000);
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+        
+        .drop-button:active {
+            transform: scale(0.98);
+        }
+        
+        .platform-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            align-items: center;
+        }
+        
+        .platform-row:last-child {
+            border-bottom: none;
+        }
+        
+        .platform-name {
+            font-weight: 600;
+        }
+        
+        .platform-stats {
+            display: flex;
+            gap: 20px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .hook-pattern {
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+        }
+        
+        .hook-pattern:last-child {
+            border-bottom: none;
+        }
+        
+        .pattern-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .pattern-bar {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .pattern-fill {
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            height: 100%;
+        }
+        
+        .pattern-rate {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-top: 3px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .content-queue {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .queue-item {
+            padding: 12px;
+            background: #252525;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #00d4ff;
+        }
+        
+        .queue-item.trend {
+            border-left-color: #ffaa00;
+        }
+        
+        .queue-item.remix {
+            border-left-color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🧠 SOUND SAVAGE AI — WAR ROOM</h1>
+            <p>Real-time control center. Live metrics. Auto-learning system.</p>
+        </div>
+        
+        <!-- THE ONE-CLICK DROP BUTTON -->
+        <button class="drop-button" onclick="triggerDrop()">
+            🔥 DROP BUTTON 🔥<br>
+            <span style="font-size: 0.6em;">One-Click Publish to All Platforms</span>
+        </button>
+        
+        <!-- KEY METRICS -->
+        <div class="card">
+            <h2>📊 OVERALL STATS</h2>
+            <div class="metric">
+                <span class="metric-label">Total Views</span>
+                <span class="metric-value" id="total-views">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Avg Viral Score</span>
+                <span class="metric-value" id="avg-viral">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Posts</span>
+                <span class="metric-value" id="total-posts">0</span>
+            </div>
+        </div>
+        
+        <!-- PERFORMANCE BREAKDOWN -->
+        <div class="card">
+            <h2>🎯 PERFORMANCE BREAKDOWN</h2>
+            <div class="performance-grid">
+                <div class="perf-box viral">
+                    <div class="perf-number" id="viral-count">0</div>
+                    <div class="perf-label">🔴 VIRAL HOT</div>
+                </div>
+                <div class="perf-box mid">
+                    <div class="perf-number" id="mid-count">0</div>
+                    <div class="perf-label">🟡 MID PERFORMERS</div>
+                </div>
+                <div class="perf-box dead">
+                    <div class="perf-number" id="dead-count">0</div>
+                    <div class="perf-label">⚫ DEAD CONTENT</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PLATFORM COMPARISON -->
+        <div class="card">
+            <h2>📱 PLATFORM WARS</h2>
+            <div id="platform-stats">
+                <p style="color: #aaa;">Loading platform data...</p>
+            </div>
+        </div>
+        
+        <!-- HOOK PATTERNS (AI LEARNING) -->
+        <div class="card">
+            <h2>🧬 HOOK PATTERN LEARNING</h2>
+            <div id="hook-patterns">
+                <p style="color: #aaa;">Analyzing patterns...</p>
+            </div>
+        </div>
+        
+        <!-- TOP VIRAL POSTS -->
+        <div class="card">
+            <h2>🔥 TOP VIRAL POSTS</h2>
+            <div id="viral-posts">
+                <p style="color: #aaa;">Loading top performers...</p>
+            </div>
+        </div>
+        
+        <!-- WEEKLY TREND CHART -->
+        <div class="card">
+            <h2>📈 7-DAY TREND</h2>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load all dashboard data
+        async function loadDashboard() {
+            try {
+                // Overall stats
+                const statsRes = await fetch("/api/dashboard/stats");
+                const stats = await statsRes.json();
+                
+                document.getElementById("total-views").textContent = (stats.overall.total_views || 0).toLocaleString();
+                document.getElementById("avg-viral").textContent = (stats.overall.avg_viral_score || 0).toFixed(1);
+                document.getElementById("total-posts").textContent = stats.overall.total_posts || 0;
+                
+                document.getElementById("viral-count").textContent = stats.performance_breakdown["🔴_viral_hot"];
+                document.getElementById("mid-count").textContent = stats.performance_breakdown["🟡_mid_performers"];
+                document.getElementById("dead-count").textContent = stats.performance_breakdown["⚫_dead_content"];
+                
+                // Platform comparison
+                const platformRes = await fetch("/api/dashboard/platforms");
+                const platforms = await platformRes.json();
+                displayPlatforms(platforms.platform_stats);
+                
+                // Hook patterns
+                const patternsRes = await fetch("/api/dashboard/patterns");
+                const patterns = await patternsRes.json();
+                displayPatterns(patterns.top_performing_patterns);
+                
+                // Weekly trend
+                const trendRes = await fetch("/api/dashboard/weekly-trend");
+                const trend = await trendRes.json();
+                displayTrend(trend.daily_breakdown);
+                
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+            }
+        }
+        
+        function displayPlatforms(platforms) {
+            const html = platforms.map(p => `
+                <div class="platform-row">
+                    <span class="platform-name">${p.platform}</span>
+                    <div class="platform-stats">
+                        <span>${p.total_views || 0} views</span>
+                        <span>Viral: ${(p.avg_viral || 0).toFixed(1)}</span>
+                    </div>
+                </div>
+            `).join("");
+            
+            document.getElementById("platform-stats").innerHTML = html || "<p style='color: #aaa;'>No data yet</p>";
+        }
+        
+        function displayPatterns(patterns) {
+            const html = patterns.map(p => `
+                <div class="hook-pattern">
+                    <div class="pattern-name">${p.hook_type}</div>
+                    <div class="pattern-bar">
+                        <div class="pattern-fill" style="width: ${(p.success_rate || 0)}%"></div>
+                    </div>
+                    <div class="pattern-rate">${(p.success_rate || 0).toFixed(1)}% success rate</div>
+                </div>
+            `).join("");
+            
+            document.getElementById("hook-patterns").innerHTML = html || "<p style='color: #aaa;'>No patterns yet</p>";
+        }
+        
+        function displayTrend(daily) {
+            if (daily.length === 0) return;
+            
+            const ctx = document.getElementById("trendChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: daily.map(d => d.day).reverse(),
+                    datasets: [{
+                        label: "Views",
+                        data: daily.map(d => d.views || 0).reverse(),
+                        borderColor: "#00d4ff",
+                        backgroundColor: "rgba(0, 212, 255, 0.1)",
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: "#aaa" }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "#222" }
+                        },
+                        x: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "#222" }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function triggerDrop() {
+            alert("🔥 DROP BUTTON TRIGGERED 🔥\n\nPublishing to all platforms...\nYouTube • TikTok • Instagram • Facebook");
+        }
+        
+        // Auto-refresh every 30 seconds
+        loadDashboard();
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "memories": [
+    {
+      "memory_id": "AUTO_0",
+      "type": "preference",
+      "title": "So i believe i got 5 % of your memory uploaded im ",
+      "memory": "So i believe i got 5 % of your memory uploaded im waiting on the chat gpt export im working on it brother",
+      "emotion": [],
+      "why_it_matters": "Auto-filed from conversation",
+      "orion_directive": "",
+      "priority": 2,
+      "tags": [
+        "auto-filed",
+        "conversation"
+      ]
+    }
+  ],
+  "global_behavior_rules": []
+}
