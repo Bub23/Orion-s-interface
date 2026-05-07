@@ -4,6 +4,8 @@ services:
   ai-system:
     build: .
     container_name: my-local-ai
+    ports:
+      - "8000:8000"
     environment:
       - NVIDIA_API_KEY=${NVIDIA_API_KEY:-placeholder}
       - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
