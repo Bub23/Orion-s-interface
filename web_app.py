@@ -1,6 +1,7 @@
 import os
 import sys
 from flask import Flask, render_template, request, jsonify
+import traceback
 
 # Force local directory import safety
 sys.path.append(os.path.dirname(__file__))
@@ -41,7 +42,13 @@ def chat():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        data = request.get_json(force=True, silent=True) or {}
+        try:
+            data = request.get_json(silent=True) or {}
+        except Exception as e:
+            print(f"JSON parse error: {e}")
+            traceback.print_exc()
+            return jsonify({"error": f"Failed to parse JSON: {str(e)}"}), 400
+
         message = data.get("message", "").strip()
 
         if not message:
@@ -54,6 +61,8 @@ def chat():
         })
 
     except Exception as e:
+        print(f"Chat error: {e}")
+        traceback.print_exc()
         return jsonify({
             "error": str(e)
         }), 500
@@ -68,7 +77,13 @@ def content():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        data = request.get_json(force=True, silent=True) or {}
+        try:
+            data = request.get_json(silent=True) or {}
+        except Exception as e:
+            print(f"JSON parse error: {e}")
+            traceback.print_exc()
+            return jsonify({"error": f"Failed to parse JSON: {str(e)}"}), 400
+
         topic = data.get("topic", "").strip()
 
         if not topic:
@@ -81,6 +96,8 @@ def content():
         })
 
     except Exception as e:
+        print(f"Content error: {e}")
+        traceback.print_exc()
         return jsonify({
             "error": str(e)
         }), 500
