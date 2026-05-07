@@ -2,6 +2,7 @@ import os
 import sys
 from flask import Flask, render_template, request, jsonify
 import traceback
+from werkzeug.exceptions import BadRequest
 
 # Force local directory import safety
 sys.path.append(os.path.dirname(__file__))
@@ -26,6 +27,36 @@ except Exception as e:
 
 
 # -------------------------
+# GLOBAL ERROR HANDLER
+# -------------------------
+@app.errorhandler(BadRequest)
+def handle_bad_request(e):
+    print(f"BadRequest caught: {e}")
+    print(f"Headers: {dict(request.headers)}")
+    print(f"Body: {request.get_data()}")
+    return jsonify({
+        "error": "Bad request",
+        "message": str(e)
+    }), 400
+
+
+# -------------------------
+# REQUEST LOGGING
+# -------------------------
+@app.before_request
+def log_request_info():
+    print(f"\n=== REQUEST ===")
+    print(f"Method: {request.method}")
+    print(f"Path: {request.path}")
+    print(f"Content-Type: {request.content_type}")
+    print(f"Content-Length: {request.content_length}")
+    print(f"Headers: {dict(request.headers)}")
+    if request.method in ['POST', 'PUT']:
+        print(f"Body: {request.get_data(as_text=True)}")
+    print(f"=== END REQUEST ===\n")
+
+
+# -------------------------
 # HOME / DASHBOARD
 # -------------------------
 @app.route("/")
@@ -42,12 +73,10 @@ def chat():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        try:
-            data = request.get_json(silent=True) or {}
-        except Exception as e:
-            print(f"JSON parse error: {e}")
-            traceback.print_exc()
-            return jsonify({"error": f"Failed to parse JSON: {str(e)}"}), 400
+        data = request.get_json(silent=True)
+        
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON"}), 400
 
         message = data.get("message", "").strip()
 
@@ -77,12 +106,10 @@ def content():
         if not ai:
             return jsonify({"error": "AI interface not initialized"}), 503
 
-        try:
-            data = request.get_json(silent=True) or {}
-        except Exception as e:
-            print(f"JSON parse error: {e}")
-            traceback.print_exc()
-            return jsonify({"error": f"Failed to parse JSON: {str(e)}"}), 400
+        data = request.get_json(silent=True)
+        
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON"}), 400
 
         topic = data.get("topic", "").strip()
 
