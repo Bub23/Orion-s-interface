@@ -5,3 +5,7 @@ __pycache__/
 memories/
 chatgpt_exports/
 .venv/
+client_secret.json
+*.pickle
+*.pkl
+youtube_token.pickle
