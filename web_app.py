@@ -17,7 +17,11 @@ app = Flask(
     static_folder="my-local-ai/static"
 )
 
-ai = AIInterface()
+try:
+    ai = AIInterface()
+except Exception as e:
+    print(f"Warning: AI Interface failed to initialize: {e}")
+    ai = None
 
 
 # -------------------------
@@ -34,6 +38,9 @@ def home():
 @app.route("/api/chat", methods=["POST"])
 def chat():
     try:
+        if not ai:
+            return jsonify({"error": "AI interface not initialized"}), 503
+
         data = request.json or {}
         message = data.get("message", "")
 
@@ -58,6 +65,9 @@ def chat():
 @app.route("/api/content", methods=["POST"])
 def content():
     try:
+        if not ai:
+            return jsonify({"error": "AI interface not initialized"}), 503
+
         data = request.json or {}
         topic = data.get("topic", "")
 
@@ -82,6 +92,8 @@ def content():
 @app.route("/api/memories/sidebar", methods=["GET"])
 def memory_sidebar():
     try:
+        if not ai:
+            return jsonify({"error": "AI interface not initialized"}), 503
         return jsonify(ai.get_stats())
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -94,7 +106,7 @@ def memory_sidebar():
 def health():
     return jsonify({
         "status": "online",
-        "ai": "connected"
+        "ai": "connected" if ai else "not initialized"
     })
 
 
@@ -103,10 +115,10 @@ def health():
 # -------------------------
 if __name__ == "__main__":
     print("🔥 Orion Browser Stable Running")
-    print("👉 http://127.0.0.1:5000")
+    print("👉 http://0.0.0.0:8000")
 
     app.run(
-        debug=True,
-        host="127.0.0.1",
-        port=5000
+        debug=False,
+        host="0.0.0.0",
+        port=8000
     )
