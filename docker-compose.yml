@@ -5,15 +5,19 @@ services:
     build: .
     container_name: my-local-ai
     environment:
-      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
-      - NVIDIA_MODEL=${NVIDIA_MODEL}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-placeholder}
+      - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
     volumes:
       - ./memories:/app/memories
       - ./chatgpt_exports:/app/chatgpt_exports
-    stdin_open: true
-    tty: true
     networks:
       - ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   ai-network:

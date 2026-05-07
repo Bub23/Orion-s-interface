@@ -10,19 +10,22 @@ class AIInterface:
     """
 
     def __init__(self):
-        self.api_key = os.getenv("NVIDIA_API_KEY")
+        self.api_key = os.getenv("NVIDIA_API_KEY", "placeholder")
         self.model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-8b-instruct")
 
-        if not self.api_key:
-            raise ValueError("Missing NVIDIA_API_KEY")
+        if self.api_key == "placeholder":
+            print("WARNING: NVIDIA_API_KEY not set. Set it in .env or environment.")
 
-        from openai import OpenAI
-
-        # NVIDIA NIM endpoint (THIS IS THE KEY FIX)
-        self.client = OpenAI(
-            base_url="https://integrate.api.nvidia.com/v1",
-            api_key=self.api_key
-        )
+        try:
+            from openai import OpenAI
+            # NVIDIA NIM endpoint (THIS IS THE KEY FIX)
+            self.client = OpenAI(
+                base_url="https://integrate.api.nvidia.com/v1",
+                api_key=self.api_key
+            )
+        except Exception as e:
+            print(f"WARNING: Could not initialize OpenAI client: {e}")
+            self.client = None
 
         try:
             from memory_manager import MemoryManager
@@ -42,6 +45,9 @@ class AIInterface:
     # -------------------------
     def chat(self, user_message):
         try:
+            if not self.client:
+                return "ERROR: API client not initialized"
+
             context = ""
 
             if self.memory:
@@ -95,7 +101,7 @@ Orion:
         return {
             "title": f"The Truth About {topic}",
             "hooks": [
-                f"You’ve been lied to about {topic}",
+                f"You've been lied to about {topic}",
                 f"This changes everything about {topic}",
                 f"No one is ready for this truth about {topic}"
             ],
