@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 sys.path.append(os.path.dirname(__file__))
 
 from ai_interface import AIInterface
+from app.routes.voice import voice_bp
 
 
 # -------------------------
@@ -29,6 +30,9 @@ app = Flask(
 # Disable Flask's default logger
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.WARNING)
+
+# Register blueprints
+app.register_blueprint(voice_bp, url_prefix="/api/voice")
 
 try:
     ai = AIInterface()
