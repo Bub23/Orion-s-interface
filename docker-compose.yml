@@ -1,36 +1,28 @@
-version: '3.8'
-
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: orion-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    depends_on:
-      - web
-    restart: unless-stopped
-
   web:
     build: .
-    container_name: orion-web
+    container_name: ${DOCKER_CONTAINER_NAME:-orion-interface}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    env_file:
+      - .env
     environment:
-      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
-      - NVIDIA_MODEL=${NVIDIA_MODEL}
-      - FLASK_ENV=production
+      APP_ENV: ${APP_ENV:-production}
+      APP_PORT: 8000
+      FLASK_ENV: production
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
+      TIKTOK_CLIENT_KEY: ${TIKTOK_CLIENT_KEY:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      TIKTOK_REDIRECT_URI: ${TIKTOK_REDIRECT_URI:-}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-250}
     volumes:
       - ./memories:/app/memories
       - ./chatgpt_exports:/app/chatgpt_exports
+      - ./storage:/app/storage
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-networks:
-  default:
-    name: orion-network

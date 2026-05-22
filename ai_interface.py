@@ -10,10 +10,11 @@ class AIInterface:
     """
 
     def __init__(self):
-        self.api_key = os.getenv("NVIDIA_API_KEY", "placeholder")
+        self.api_key = os.getenv("NVIDIA_API_KEY", "").strip()
         self.model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-8b-instruct")
+        self.api_ready = bool(self.api_key)
 
-        if self.api_key == "placeholder":
+        if not self.api_ready:
             print("WARNING: NVIDIA_API_KEY not set. Set it in .env or environment.")
 
         try:
@@ -45,6 +46,9 @@ class AIInterface:
     # -------------------------
     def chat(self, user_message):
         try:
+            if not self.api_ready:
+                return "NVIDIA_API_KEY is not configured. Add it to .env or the Docker environment to enable Orion responses."
+
             if not self.client:
                 return "ERROR: API client not initialized"
 
@@ -113,11 +117,19 @@ Orion:
     # STATS
     # -------------------------
     def get_stats(self):
+        memory_summary = self.memory.get_summary() if self.memory else {
+            "total_conversations": 0,
+            "total_facts": len(self.memory_store),
+            "memory_file_size": 0
+        }
+
         return {
-            "status": "NVIDIA NIM ONLINE",
+            "status": "NVIDIA NIM ONLINE" if self.api_ready else "NVIDIA NIM NOT CONFIGURED",
             "model": self.model,
             "memory": len(self.memory_store),
-            "tiktok": "READY" if self.tiktok_client_key else "NOT CONFIGURED"
+            "memory_summary": memory_summary,
+            "tiktok": "READY" if self.tiktok_client_key else "NOT CONFIGURED",
+            "api_ready": self.api_ready
         }
 
     # -------------------------

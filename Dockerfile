@@ -1,14 +1,24 @@
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_PORT=8000
+
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Create memories directory
-RUN mkdir -p memories
+RUN mkdir -p memories storage/uploads storage/jobs storage/temp
 
-# Run with Gunicorn: 4 workers, bind to 0.0.0.0:8000
-CMD ["gunicorn", "--workers", "4", "--worker-class", "sync", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info", "web_app:app"]
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:${APP_PORT}/api/health || exit 1
+
+CMD ["sh", "-c", "gunicorn --workers ${WEB_CONCURRENCY:-2} --worker-class sync --bind 0.0.0.0:${APP_PORT:-8000} --access-logfile - --error-logfile - --log-level info web_app:app"]
