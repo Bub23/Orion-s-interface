@@ -9,6 +9,11 @@ Local AI command center for Bub Outlaw, Sound Savage AI, Truth Exposed AI, and t
 - Primary UI route: `/`
 - Dashboard route: `/dashboard`
 - Chat endpoint: `/api/chat`
+- Content endpoints: `/api/content/create`, `/api/content/history`, `/api/content/platform-pack`
+- Campaign endpoints: `/api/campaign/create`, `/api/campaign/history`, `/api/campaign/<id>`
+- Lead draft endpoints: `/api/leads/draft-message`, `/api/leads/save`, `/api/leads/history`
+- Meta draft endpoints: `/api/meta/status`, `/api/meta/test`, `/api/meta/create-facebook-draft`, `/api/meta/create-instagram-draft`, `/api/meta/queue-post`
+- YouTube draft endpoints: `/api/youtube/status`, `/api/youtube/create-video-draft`, `/api/youtube/queue-upload-draft`
 - Status endpoint: `/api/status`
 - Health endpoint: `/api/health`
 - Memory sidebar endpoint: `/api/memories/sidebar`
@@ -39,9 +44,37 @@ TIKTOK_CLIENT_SECRET=
 TIKTOK_REDIRECT_URI=
 YOUTUBE_API_KEY=
 FACEBOOK_APP_ID=
+META_APP_ID=
+META_APP_SECRET=
+META_ACCESS_TOKEN=
+FACEBOOK_PAGE_ID=
+INSTAGRAM_BUSINESS_ID=
+YOUTUBE_CLIENT_ID=
+YOUTUBE_CLIENT_SECRET=
+YOUTUBE_REFRESH_TOKEN=
+YOUTUBE_CLIENT_SECRET_FILE=
+YOUTUBE_CHANNEL_ID=
 ```
 
+Keep `.env` local only. Do not commit `.env`, access tokens, app secrets, refresh tokens, page IDs tied to private accounts, or copied API responses containing credentials.
+
+For future YouTube setup, put the Google OAuth client JSON somewhere local and private, then set only its path:
+
+```env
+YOUTUBE_CLIENT_SECRET_FILE=C:\path\to\client_secret.json
+```
+
+Do not commit the OAuth JSON file. Orion does not read, copy, or upload with that file yet.
+
 ## Run Locally
+
+Operator launch:
+
+```text
+Double-click START_ORION.bat
+```
+
+The launcher runs preflight, starts Flask, and opens the dashboard.
 
 PowerShell:
 
@@ -50,6 +83,15 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+python web_app.py
+```
+
+Required verification commands:
+
+```powershell
+python startup_preflight.py
+python test_content_engine.py
+python verify_setup.py
 python web_app.py
 ```
 
@@ -116,9 +158,19 @@ Persistent local folders:
 - `memories/`
 - `chatgpt_exports/`
 - `storage/`
+- `data/content_history.json`
+- `data/campaign_history.json`
+- `data/lead_history.json`
+- `data/meta_queue.json`
+- `data/youtube_queue.json`
 
 ## Notes
 
 - This repo is Python/Flask, not npm-based; there is no `package.json`, `npm install`, or `npm run build` command at the root.
 - `run.py` starts an older Sound Savage dashboard path on port `5000`; the Orion Command Center uses `web_app.py` on port `8000`.
-- The AI command input works without crashing when `NVIDIA_API_KEY` is missing, but live model responses require the key.
+- `.env` is required for live provider keys and is never committed.
+- If Orion shows AI offline, add `NVIDIA_API_KEY` or `OPENAI_API_KEY` to `.env`.
+- The AI command input works without crashing when provider keys are missing, but live model responses require `NVIDIA_API_KEY` or `OPENAI_API_KEY`.
+- Empire Ops is draft-only. Campaigns and lead messages are saved for manual review and copy/paste; no automatic posting, scraping, or DMs are enabled.
+- Meta integration is draft-only. Facebook and Instagram drafts enter `manual_review`; Orion does not publish to Meta automatically yet.
+- YouTube integration is draft-only. Video drafts and upload queue items enter `manual_review`; Orion does not run OAuth or upload videos yet.

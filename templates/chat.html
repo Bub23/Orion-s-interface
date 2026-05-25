@@ -328,6 +328,197 @@
             white-space: nowrap;
         }
 
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(8,9,11,.48);
+        }
+
+        .tab-button {
+            padding: 0.6rem 0.9rem;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .75rem;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(145deg, var(--red-2), var(--red));
+            color: white;
+            border-color: rgba(225,25,49,.7);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-form {
+            display: grid;
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: .08em;
+        }
+
+        .form-input {
+            width: 100%;
+            min-height: 2.5rem;
+            padding: 0 0.75rem;
+            background: #090b0f;
+            border: 1px solid #343b46;
+            color: white;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: rgba(225,25,49,.8);
+            box-shadow: 0 0 0 3px rgba(225,25,49,.14);
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 6rem;
+            padding: 0.75rem;
+            background: #090b0f;
+            border: 1px solid #343b46;
+            color: white;
+            outline: none;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .form-textarea:focus {
+            border-color: rgba(225,25,49,.8);
+            box-shadow: 0 0 0 3px rgba(225,25,49,.14);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.6rem;
+        }
+
+        .platform-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem;
+            background: #0c0f14;
+            border: 1px solid var(--line);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .platform-checkbox:hover {
+            border-color: rgba(225,25,49,.5);
+            background: #101419;
+        }
+
+        .platform-checkbox input {
+            cursor: pointer;
+        }
+
+        .platform-checkbox label {
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .preview-section {
+            padding: 1rem;
+            display: grid;
+            gap: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .preview-item {
+            padding: 1rem;
+            background: #0c0f14;
+            border: 1px solid var(--line);
+            border-radius: 0;
+        }
+
+        .preview-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .preview-stats {
+            font-size: 0.75rem;
+            color: var(--steel);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--line);
+        }
+
+        .history-item {
+            padding: 1rem;
+            background: #0c0f14;
+            border: 1px solid var(--line);
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: rgba(225,25,49,.5);
+            background: #101419;
+        }
+
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .history-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .empty-state {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: var(--muted);
+        }
+
         @media (max-width: 1200px) {
             .layout {
                 grid-template-columns: 1fr;
@@ -354,6 +545,18 @@
             .topbar {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .platform-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -456,44 +659,329 @@
 
             <div class="panel command-panel">
 
-                <div class="panel-head">
-                    <h2 class="panel-title">Command Console</h2>
-                    <p class="panel-subtitle">Real AI routing + local context injection</p>
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="console">Console</button>
+                    <button class="tab-button" data-tab="content">Content Engine</button>
+                    <button class="tab-button" data-tab="empire">Empire Ops</button>
+                    <button class="tab-button" data-tab="revenue">Revenue</button>
+                    <button class="tab-button" data-tab="daily">Daily Ops</button>
+                    <button class="tab-button" data-tab="platform">Platform Operator</button>
                 </div>
 
-                <div class="console" id="chat-container">
-
-                    <div class="empty" id="empty-state">
-                        <strong>Orion online</strong>
-                        <span>Local AI infrastructure operational.</span>
+                <div id="console-tab" class="tab-content active">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Command Console</h2>
+                        <p class="panel-subtitle">Real AI routing + local context injection</p>
                     </div>
 
+                    <div class="console" id="chat-container">
+
+                        <div class="empty" id="empty-state">
+                            <strong>Orion online</strong>
+                            <span>Local AI infrastructure operational.</span>
+                        </div>
+
+                    </div>
+
+                    <form class="command-form" id="command-form">
+
+                        <div class="quick-actions">
+                            <button class="btn" type="button" data-command="Give me a real local system report using current metrics only.">Status</button>
+
+                            <button class="btn" type="button" data-command="Analyze Orion infrastructure risks and next engineering priorities.">Infrastructure</button>
+
+                            <button class="btn" type="button" data-command="Analyze GPU readiness for AI workloads.">GPU</button>
+
+                            <button class="btn" type="button" data-command="Create a Sound Savage AI deployment checklist.">Deployment</button>
+                        </div>
+
+                        <div class="command-row">
+                            <input class="command-input" id="message-input" placeholder="Enter Orion command..." autocomplete="off">
+
+                            <button class="btn primary" id="send-button" type="submit">
+                                Send
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
 
-                <form class="command-form" id="command-form">
-
-                    <div class="quick-actions">
-                        <button class="btn" type="button" data-command="Give me a real local system report using current metrics only.">Status</button>
-
-                        <button class="btn" type="button" data-command="Analyze Orion infrastructure risks and next engineering priorities.">Infrastructure</button>
-
-                        <button class="btn" type="button" data-command="Analyze GPU readiness for AI workloads.">GPU</button>
-
-                        <button class="btn" type="button" data-command="Create a Sound Savage AI deployment checklist.">Deployment</button>
+                <div id="content-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Content Engine</h2>
+                        <p class="panel-subtitle">Multi-platform content generator</p>
                     </div>
 
-                    <div class="command-row">
-                        <input class="command-input" id="message-input" placeholder="Enter Orion command..." autocomplete="off">
+                    <form class="content-form" id="content-form">
+                        <div class="form-group">
+                            <label class="form-label">Content Title (optional)</label>
+                            <input class="form-input" id="content-title" type="text" placeholder="Enter content title..." autocomplete="off">
+                        </div>
 
-                        <button class="btn primary" id="send-button" type="submit">
-                            Send
-                        </button>
+                        <div class="form-group">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-textarea" id="content-input" placeholder="Write your content here..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Target Platforms</label>
+                            <div class="platform-grid">
+                                <label class="platform-checkbox">
+                                    <input type="checkbox" value="tiktok" checked>
+                                    <span>TikTok</span>
+                                </label>
+                                <label class="platform-checkbox">
+                                    <input type="checkbox" value="facebook" checked>
+                                    <span>Facebook</span>
+                                </label>
+                                <label class="platform-checkbox">
+                                    <input type="checkbox" value="instagram" checked>
+                                    <span>Instagram</span>
+                                </label>
+                                <label class="platform-checkbox">
+                                    <input type="checkbox" value="threads" checked>
+                                    <span>Threads</span>
+                                </label>
+                                <label class="platform-checkbox">
+                                    <input type="checkbox" value="youtube" checked>
+                                    <span>YouTube</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button class="btn primary" type="submit" id="create-content-btn">Create Draft</button>
+                            <button class="btn" type="button" id="view-history-btn">View History</button>
+                        </div>
+                    </form>
+
+                    <div id="content-result" class="preview-section" style="display: none;">
                     </div>
 
-                </form>
+                    <div id="history-view" class="preview-section" style="display: none;">
+                        <div id="history-list"></div>
+                    </div>
+                </div>
+
+                <div id="empire-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Empire Ops</h2>
+                        <p class="panel-subtitle">Manual-review campaign and lead drafts</p>
+                    </div>
+
+                    <form class="content-form" id="campaign-form">
+                        <div class="form-group">
+                            <label class="form-label">Campaign Title</label>
+                            <input class="form-input" id="campaign-title" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Goal</label>
+                            <input class="form-input" id="campaign-goal" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Offer</label>
+                            <input class="form-input" id="campaign-offer" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Audience</label>
+                            <input class="form-input" id="campaign-audience" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Platforms</label>
+                            <div class="platform-grid" id="campaign-platforms">
+                                <label class="platform-checkbox"><input type="checkbox" value="facebook" checked><span>Facebook</span></label>
+                                <label class="platform-checkbox"><input type="checkbox" value="instagram" checked><span>Instagram</span></label>
+                                <label class="platform-checkbox"><input type="checkbox" value="tiktok" checked><span>TikTok</span></label>
+                                <label class="platform-checkbox"><input type="checkbox" value="youtube" checked><span>YouTube</span></label>
+                                <label class="platform-checkbox"><input type="checkbox" value="threads" checked><span>Threads</span></label>
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn primary" type="submit">Generate Campaign</button>
+                            <button class="btn" type="button" id="empire-history-btn">History</button>
+                        </div>
+                    </form>
+
+                    <form class="content-form" id="lead-form">
+                        <div class="panel-head" style="padding-left:0;padding-right:0;">
+                            <h2 class="panel-title">Lead Message Generator</h2>
+                            <p class="panel-subtitle">Drafts only. Manual copy/paste approval required.</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Type</label>
+                            <input class="form-input" id="lead-business" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Customer</label>
+                            <input class="form-input" id="lead-customer" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Offer</label>
+                            <input class="form-input" id="lead-offer" type="text" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pain Point</label>
+                            <input class="form-input" id="lead-pain" type="text" autocomplete="off">
+                        </div>
+                        <div class="platform-grid">
+                            <div class="form-group">
+                                <label class="form-label">Tone</label>
+                                <input class="form-input" id="lead-tone" type="text" value="professional" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Platform</label>
+                                <input class="form-input" id="lead-platform" type="text" value="facebook" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn primary" type="button" id="draft-lead-btn">Draft Message</button>
+                            <button class="btn" type="submit">Save Lead Draft</button>
+                        </div>
+                    </form>
+
+                    <div id="empire-result" class="preview-section" style="display: none;"></div>
+                </div>
+
+                <div id="revenue-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Revenue Command Center</h2>
+                        <p class="panel-subtitle">Offers, leads, deals, and manual follow-ups</p>
+                    </div>
+                    <div class="content-form">
+                        <div class="form-group">
+                            <label class="form-label">Offer Title</label>
+                            <input class="form-input" id="rev-offer-title" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Audience</label>
+                            <input class="form-input" id="rev-offer-audience" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Solution / Deliverables</label>
+                            <textarea class="form-textarea" id="rev-offer-solution"></textarea>
+                        </div>
+                        <button class="btn primary" type="button" id="rev-create-offer">Create Offer</button>
+
+                        <div class="form-group">
+                            <label class="form-label">Lead Name / Business</label>
+                            <input class="form-input" id="rev-lead-name" type="text">
+                        </div>
+                        <div class="platform-grid">
+                            <input class="form-input" id="rev-lead-business" type="text" placeholder="Business">
+                            <input class="form-input" id="rev-lead-value" type="number" placeholder="Estimated value">
+                        </div>
+                        <div class="platform-grid">
+                            <select class="form-input" id="rev-lead-status">
+                                <option value="new">new</option>
+                                <option value="contacted">contacted</option>
+                                <option value="interested">interested</option>
+                                <option value="quoted">quoted</option>
+                                <option value="closed">closed</option>
+                                <option value="lost">lost</option>
+                            </select>
+                            <input class="form-input" id="rev-lead-platform" type="text" placeholder="Platform">
+                        </div>
+                        <button class="btn primary" type="button" id="rev-create-lead">Add Lead</button>
+
+                        <div class="form-group">
+                            <label class="form-label">Follow-Up Message</label>
+                            <textarea class="form-textarea" id="rev-followup-message"></textarea>
+                        </div>
+                        <div class="platform-grid">
+                            <input class="form-input" id="rev-followup-lead" type="text" placeholder="Lead ID optional">
+                            <input class="form-input" id="rev-followup-due" type="text" placeholder="Due ISO datetime">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="rev-create-followup">Create Follow-Up</button>
+                            <button class="btn" type="button" id="rev-load-leads">Leads</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="rev-load-followups">Follow-Ups</button>
+                            <button class="btn primary" type="button" id="rev-report">Revenue Report</button>
+                        </div>
+                    </div>
+                    <div id="revenue-result" class="preview-section" style="display:none;"></div>
+                </div>
+
+                <div id="daily-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Daily Ops</h2>
+                        <p class="panel-subtitle">Tasks, goals, revenue, and daily execution</p>
+                    </div>
+                    <div class="content-form">
+                        <div class="form-group">
+                            <label class="form-label">Quick Task</label>
+                            <input class="form-input" id="daily-task-title" type="text" placeholder="Task title">
+                        </div>
+                        <div class="platform-grid">
+                            <input class="form-input" id="daily-task-category" type="text" placeholder="Category">
+                            <input class="form-input" id="daily-task-priority" type="text" placeholder="Priority">
+                        </div>
+                        <input class="form-input" id="daily-task-due" type="text" placeholder="Due time">
+                        <button class="btn primary" type="button" id="daily-create-task">Add Task</button>
+
+                        <div class="platform-grid">
+                            <input class="form-input" id="goal-shorts" type="number" placeholder="Shorts goal">
+                            <input class="form-input" id="goal-posts" type="number" placeholder="Posts goal">
+                            <input class="form-input" id="goal-leads" type="number" placeholder="Leads goal">
+                            <input class="form-input" id="goal-outreach" type="number" placeholder="Outreach goal">
+                        </div>
+                        <button class="btn" type="button" id="daily-set-goals">Set Goals</button>
+
+                        <div class="platform-grid">
+                            <input class="form-input" id="daily-revenue-amount" type="number" placeholder="Revenue amount">
+                            <input class="form-input" id="daily-revenue-source" type="text" placeholder="Source">
+                        </div>
+                        <input class="form-input" id="daily-revenue-notes" type="text" placeholder="Notes">
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="daily-log-revenue">Log Revenue</button>
+                            <button class="btn" type="button" id="daily-load">Load Daily Ops</button>
+                        </div>
+                        <button class="btn" type="button" id="daily-reset">Reset Day</button>
+                    </div>
+                    <div id="daily-result" class="preview-section" style="display:none;"></div>
+                </div>
+
+                <div id="platform-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Platform Operator</h2>
+                        <p class="panel-subtitle">YouTube, Shorts, voice/avatar, social drafts, and lead targeting</p>
+                    </div>
+                    <div class="content-form">
+                        <input class="form-input" id="platform-topic" type="text" placeholder="Topic / title">
+                        <textarea class="form-textarea" id="platform-body" placeholder="Description, caption, script, or customer message"></textarea>
+                        <div class="platform-grid">
+                            <input class="form-input" id="platform-niche" type="text" placeholder="Niche">
+                            <input class="form-input" id="platform-location" type="text" placeholder="Location">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="po-youtube-audit">YouTube Audit</button>
+                            <button class="btn" type="button" id="po-youtube-fix">YouTube Fix Draft</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="po-short-pack">Short Pack</button>
+                            <button class="btn" type="button" id="po-voice-job">Voice Job</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="po-avatar-job">Avatar Job</button>
+                            <button class="btn" type="button" id="po-media-jobs">Media Jobs</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="po-facebook-draft">Facebook Draft</button>
+                            <button class="btn" type="button" id="po-instagram-draft">Instagram Draft</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn" type="button" id="po-reply-draft">Reply Draft</button>
+                            <button class="btn primary" type="button" id="po-target-list">Lead Targets</button>
+                        </div>
+                        <button class="btn primary" type="button" id="po-outreach">Outreach Sequence</button>
+                    </div>
+                    <div id="platform-result" class="preview-section" style="display:none;"></div>
+                </div>
+
             </div>
 
-            <aside class="panel">
+        <aside class="panel">
 
                 <div class="panel-head">
                     <h2 class="panel-title">Activity</h2>
@@ -501,6 +989,82 @@
                 </div>
 
                 <div class="activity" id="activity-log"></div>
+
+                <div class="panel-head">
+                    <h2 class="panel-title">Meta Status</h2>
+                    <p class="panel-subtitle">Facebook + Instagram manual queue</p>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <span>Meta</span>
+                        <strong id="meta-configured">Checking</strong>
+                    </div>
+                    <div class="metric">
+                        <span>Queue</span>
+                        <strong id="meta-queue-total">0</strong>
+                    </div>
+                </div>
+                <div class="output-box" id="meta-missing-fields">Missing fields: Checking</div>
+
+                <div class="content-form">
+                    <button class="btn" type="button" id="meta-facebook-btn">Facebook Draft</button>
+                    <button class="btn" type="button" id="meta-instagram-btn">Instagram Draft</button>
+                    <button class="btn" type="button" id="meta-queue-btn">Queue Viewer</button>
+                </div>
+
+                <div class="panel-head">
+                    <h2 class="panel-title">YouTube Status</h2>
+                    <p class="panel-subtitle">Manual video upload queue</p>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <span>YouTube</span>
+                        <strong id="youtube-configured">Checking</strong>
+                    </div>
+                    <div class="metric">
+                        <span>Queue</span>
+                        <strong id="youtube-queue-total">0</strong>
+                    </div>
+                </div>
+                <div class="output-box" id="youtube-missing-fields">Missing fields: Checking</div>
+
+                <div class="content-form">
+                    <button class="btn" type="button" id="youtube-draft-btn">YouTube Draft</button>
+                    <button class="btn" type="button" id="youtube-queue-btn">Queue Viewer</button>
+                    <button class="btn" type="button" id="youtube-oauth-start-btn">Start YouTube OAuth</button>
+                    <button class="btn" type="button" id="youtube-exchange-token-btn">Exchange YouTube Token</button>
+                    <button class="btn primary" type="button" id="approval-queue-btn">Approval Queue</button>
+                    <button class="btn primary" type="button" id="scheduler-btn">Scheduler</button>
+                    <button class="btn" type="button" id="publish-status-btn">Publish Status</button>
+                </div>
+
+                <form class="content-form" id="youtube-publish-form">
+                    <div class="form-label">YOUTUBE PUBLISH</div>
+                    <div class="form-group">
+                        <label class="form-label" for="youtube-publish-id">Queue Item ID</label>
+                        <input class="form-input" id="youtube-publish-id" type="text" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="youtube-publish-video-path">Video Path</label>
+                        <input class="form-input" id="youtube-publish-video-path" type="text" autocomplete="off">
+                        <div class="panel-subtitle">Example video path: C:\Users\outla\Videos\video.mp4</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="youtube-publish-title">Title</label>
+                        <input class="form-input" id="youtube-publish-title" type="text" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="youtube-publish-description">Description</label>
+                        <textarea class="form-textarea" id="youtube-publish-description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="youtube-publish-tags">Tags (comma separated)</label>
+                        <input class="form-input" id="youtube-publish-tags" type="text" autocomplete="off">
+                    </div>
+                    <button class="btn primary" type="submit" id="youtube-publish-submit">PUBLISH TO YOUTUBE</button>
+                </form>
 
             </aside>
 
@@ -533,6 +1097,77 @@ document.addEventListener("DOMContentLoaded", () => {
             sendCommand(button.dataset.command);
         });
     });
+
+    document.querySelectorAll(".tab-button").forEach(button => {
+        button.addEventListener("click", () => {
+            switchTab(button.dataset.tab);
+        });
+    });
+
+    document.getElementById("content-form").addEventListener("submit", event => {
+        event.preventDefault();
+        createContentDraft();
+    });
+
+    document.getElementById("youtube-publish-form").addEventListener("submit", event => {
+        event.preventDefault();
+        submitYouTubePublish();
+    });
+
+    document.getElementById("view-history-btn").addEventListener("click", () => {
+        showContentHistory();
+    });
+
+    document.getElementById("campaign-form").addEventListener("submit", event => {
+        event.preventDefault();
+        createCampaignDraft();
+    });
+
+    document.getElementById("lead-form").addEventListener("submit", event => {
+        event.preventDefault();
+        saveLeadDraft();
+    });
+
+    document.getElementById("draft-lead-btn").addEventListener("click", () => {
+        draftLeadMessage();
+    });
+
+    document.getElementById("empire-history-btn").addEventListener("click", () => {
+        showEmpireHistory();
+    });
+
+    document.getElementById("meta-facebook-btn").addEventListener("click", () => createMetaDraft("facebook"));
+    document.getElementById("meta-instagram-btn").addEventListener("click", () => createMetaDraft("instagram"));
+    document.getElementById("meta-queue-btn").addEventListener("click", showMetaQueue);
+    document.getElementById("youtube-draft-btn").addEventListener("click", createYouTubeDraft);
+    document.getElementById("youtube-queue-btn").addEventListener("click", showYouTubeQueue);
+    document.getElementById("youtube-oauth-start-btn").addEventListener("click", startYouTubeOAuth);
+    document.getElementById("youtube-exchange-token-btn").addEventListener("click", exchangeYouTubeToken);
+    document.getElementById("approval-queue-btn").addEventListener("click", showApprovalQueue);
+    document.getElementById("scheduler-btn").addEventListener("click", showScheduler);
+    document.getElementById("publish-status-btn").addEventListener("click", showPublishStatus);
+    document.getElementById("rev-create-offer").addEventListener("click", createRevenueOffer);
+    document.getElementById("rev-create-lead").addEventListener("click", createRevenueLead);
+    document.getElementById("rev-create-followup").addEventListener("click", createRevenueFollowup);
+    document.getElementById("rev-load-leads").addEventListener("click", loadRevenueLeads);
+    document.getElementById("rev-load-followups").addEventListener("click", loadRevenueFollowups);
+    document.getElementById("rev-report").addEventListener("click", loadRevenueReport);
+    document.getElementById("daily-create-task").addEventListener("click", createDailyTask);
+    document.getElementById("daily-set-goals").addEventListener("click", setDailyGoals);
+    document.getElementById("daily-log-revenue").addEventListener("click", logDailyRevenue);
+    document.getElementById("daily-load").addEventListener("click", loadDailyOps);
+    document.getElementById("daily-reset").addEventListener("click", resetDailyOps);
+    document.getElementById("po-youtube-audit").addEventListener("click", () => platformPost("/api/platform/youtube/audit-video", platformPayload(), "YouTube Audit"));
+    document.getElementById("po-youtube-fix").addEventListener("click", () => platformPost("/api/platform/youtube/fix-draft", platformPayload(), "YouTube Fix Draft"));
+    document.getElementById("po-short-pack").addEventListener("click", () => platformPost("/api/media/create-short-pack", platformPayload(), "Short Pack"));
+    document.getElementById("po-voice-job").addEventListener("click", () => platformPost("/api/media/create-voiceover-job", {script: platformBody()}, "Voice Job"));
+    document.getElementById("po-avatar-job").addEventListener("click", () => platformPost("/api/media/create-avatar-job", {script: platformBody(), avatar_style: "Orion operator"}, "Avatar Job"));
+    document.getElementById("po-media-jobs").addEventListener("click", loadMediaJobs);
+    document.getElementById("po-facebook-draft").addEventListener("click", () => platformPost("/api/platform/facebook/create-post-update-draft", {title: platformTopic(), body: platformBody()}, "Facebook Draft"));
+    document.getElementById("po-instagram-draft").addEventListener("click", () => platformPost("/api/platform/instagram/create-post-update-draft", {title: platformTopic(), caption: platformBody()}, "Instagram Draft"));
+    document.getElementById("po-reply-draft").addEventListener("click", () => platformPost("/api/platform/comments/create-reply-draft", {customer_message: platformBody(), offer: platformTopic(), platform: "manual"}, "Reply Draft"));
+    document.getElementById("po-target-list").addEventListener("click", () => platformPost("/api/leads/generate-target-list", {niche: platformNiche(), location: platformLocation(), platform: "manual"}, "Lead Targets"));
+    document.getElementById("po-outreach").addEventListener("click", () => platformPost("/api/leads/create-outreach-sequence", {niche: platformNiche(), offer: platformTopic()}, "Outreach Sequence"));
 });
 
 async function refreshStatus() {
@@ -551,8 +1186,10 @@ async function refreshStatus() {
         const metrics = await metricsResponse.json();
 
         setText("app-status", status.status);
-        setText("ai-status", status.ai_ready ? "Ready" : "Offline");
+        setText("ai-status", status.ai_ready ? "Ready" : "AI key missing. Add NVIDIA_API_KEY or OPENAI_API_KEY to .env.");
         setText("model-name", status.model);
+        refreshMetaStatus();
+        refreshYouTubeStatus();
 
         setText("cpu-percent", `${metrics.cpu_percent}%`);
         setText("ram-percent", `${metrics.memory.used_percent}%`);
@@ -597,7 +1234,7 @@ async function refreshStatus() {
         dot.className = `dot ${status.ai_ready ? "ready" : "down"}`;
 
         topStatus.querySelector("span:last-child").textContent =
-            status.ai_ready ? "AI ready" : "AI offline";
+            status.ai_ready ? "AI ready" : "AI key missing";
 
     } catch (error) {
 
@@ -758,6 +1395,32 @@ function setText(id, value) {
     }
 }
 
+function platformLabel(status) {
+    if (!status) return "MISSING";
+    if (status.ready) return "READY";
+    return status.missing && status.missing.length ? "PARTIAL" : "MISSING";
+}
+
+function missingFieldsLabel(status) {
+    if (!status) return "Missing fields: unavailable";
+    return status.missing && status.missing.length
+        ? `Missing fields: ${status.missing.join(", ")}`
+        : "Missing fields: none";
+}
+
+async function readErrorMessage(response, fallback) {
+    let payload = {};
+    try {
+        payload = await response.json();
+    } catch (error) {
+        return fallback;
+    }
+    if (payload.missing && payload.missing.length) {
+        return `${payload.error || fallback}: ${payload.missing.join(", ")}`;
+    }
+    return payload.error || payload.message || fallback;
+}
+
 function updateMetricColors() {
 
     updateCard("cpu-percent");
@@ -811,6 +1474,1089 @@ function updateCard(id, temp = false) {
     } else if (value >= 75) {
         card.classList.add("warning");
     }
+}
+
+function switchTab(tabName) {
+    const tabs = document.querySelectorAll(".tab-button");
+    const contents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach(tab => {
+        tab.classList.remove("active");
+        if (tab.dataset.tab === tabName) {
+            tab.classList.add("active");
+        }
+    });
+
+    contents.forEach(content => {
+        content.classList.remove("active");
+    });
+
+    const activeTab = document.getElementById(`${tabName}-tab`);
+    if (activeTab) {
+        activeTab.classList.add("active");
+    }
+}
+
+async function createContentDraft() {
+    const title = document.getElementById("content-title").value.trim();
+    const content = document.getElementById("content-input").value.trim();
+    const platformCheckboxes = document.querySelectorAll(".platform-checkbox input:checked");
+    const platforms = Array.from(platformCheckboxes).map(cb => cb.value);
+
+    if (!content) {
+        alert("Please enter content");
+        return;
+    }
+
+    if (platforms.length === 0) {
+        alert("Please select at least one platform");
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/content/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                content,
+                title: title || null,
+                platforms
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            addLog("Content draft created");
+            showPlatformPreview(data.draft_id);
+        } else {
+            alert(`Error: ${data.error || "Failed to create draft"}`);
+            addLog(`Content creation failed: ${data.error}`);
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Connection error creating content");
+        addLog("Content creation error");
+    }
+}
+
+async function showPlatformPreview(draftId) {
+    try {
+        const response = await fetch(`/api/content/platform-pack?draft_id=${encodeURIComponent(draftId)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(`Error: ${data.error}`);
+            return;
+        }
+
+        const resultDiv = document.getElementById("content-result");
+        const historyDiv = document.getElementById("history-view");
+        const formDiv = document.getElementById("content-form").parentElement;
+
+        formDiv.style.display = "none";
+        historyDiv.style.display = "none";
+        resultDiv.style.display = "block";
+        resultDiv.innerHTML = "";
+
+        const titleEl = document.createElement("div");
+        titleEl.className = "form-label";
+        titleEl.textContent = `Draft: ${data.title}`;
+        resultDiv.appendChild(titleEl);
+
+        Object.entries(data.platforms).forEach(([platform, content]) => {
+            if (content.error) return;
+
+            const item = document.createElement("div");
+            item.className = "preview-item";
+
+            const platformTitle = document.createElement("div");
+            platformTitle.className = "preview-title";
+            platformTitle.textContent = content.title;
+            item.appendChild(platformTitle);
+
+            const contentText = document.createElement("div");
+            contentText.className = "preview-text";
+            contentText.textContent = content.formatted_content;
+            item.appendChild(contentText);
+
+            const stats = document.createElement("div");
+            stats.className = "preview-stats";
+            stats.textContent = `${content.char_count}/${content.max_chars} characters${content.is_truncated ? ' (truncated)' : ''}`;
+            item.appendChild(stats);
+
+            resultDiv.appendChild(item);
+        });
+
+        const backBtn = document.createElement("button");
+        backBtn.className = "btn primary";
+        backBtn.textContent = "Create Another";
+        backBtn.style.marginTop = "1rem";
+        backBtn.addEventListener("click", () => {
+            document.getElementById("content-title").value = "";
+            document.getElementById("content-input").value = "";
+            resultDiv.style.display = "none";
+            document.getElementById("content-form").parentElement.style.display = "block";
+        });
+        resultDiv.appendChild(backBtn);
+
+    } catch (error) {
+        console.error(error);
+        alert("Error loading platform preview");
+    }
+}
+
+async function showContentHistory() {
+    try {
+        const response = await fetch("/api/content/history?limit=20");
+        const data = await response.json();
+
+        const historyDiv = document.getElementById("history-view");
+        const resultDiv = document.getElementById("content-result");
+        const formDiv = document.getElementById("content-form").parentElement;
+
+        formDiv.style.display = "none";
+        resultDiv.style.display = "none";
+        historyDiv.style.display = "block";
+
+        const historyList = document.getElementById("history-list");
+        historyList.innerHTML = "";
+
+        if (data.total === 0) {
+            historyList.innerHTML = "<div class='empty-state'>No drafts yet. Create one!</div>";
+            return;
+        }
+
+        data.drafts.forEach(draft => {
+            const item = document.createElement("div");
+            item.className = "history-item";
+
+            const title = document.createElement("div");
+            title.className = "history-title";
+            title.textContent = draft.title;
+            item.appendChild(title);
+
+            const meta = document.createElement("div");
+            meta.className = "history-meta";
+            const date = new Date(draft.created_at);
+            meta.textContent = `${date.toLocaleDateString()} - ${draft.platforms.join(", ")}`;
+            item.appendChild(meta);
+
+            const preview = document.createElement("div");
+            preview.style.fontSize = "0.85rem";
+            preview.style.color = "var(--muted)";
+            preview.style.marginTop = "0.5rem";
+            preview.textContent = draft.content.substring(0, 100) + (draft.content.length > 100 ? "..." : "");
+            item.appendChild(preview);
+
+            item.addEventListener("click", () => {
+                showPlatformPreview(draft.id);
+            });
+
+            historyList.appendChild(item);
+        });
+
+        const backBtn = document.createElement("button");
+        backBtn.className = "btn primary";
+        backBtn.textContent = "New Draft";
+        backBtn.style.marginTop = "1rem";
+        backBtn.addEventListener("click", () => {
+            document.getElementById("content-form").parentElement.style.display = "block";
+            historyDiv.style.display = "none";
+        });
+        historyList.appendChild(backBtn);
+
+        addLog(`Loaded ${data.total} drafts`);
+
+    } catch (error) {
+        console.error(error);
+        alert("Error loading content history");
+        addLog("Content history error");
+    }
+}
+
+async function refreshMetaStatus() {
+    try {
+        const [response, platformResponse] = await Promise.all([
+            fetch("/api/meta/status"),
+            fetch(`/api/platform/full-status?ts=${Date.now()}`, {cache: "no-store"})
+        ]);
+        const data = await response.json();
+        const platform = await platformResponse.json();
+        setText("meta-configured", platformLabel(platform.meta));
+        setText("meta-missing-fields", missingFieldsLabel(platform.meta));
+        setText("meta-queue-total", data.queue_total);
+    } catch (error) {
+        setText("meta-configured", "Error");
+        setText("meta-missing-fields", "Missing fields: unavailable");
+    }
+}
+
+async function refreshYouTubeStatus() {
+    try {
+        const [response, platformResponse] = await Promise.all([
+            fetch("/api/youtube/status"),
+            fetch(`/api/platform/full-status?ts=${Date.now()}`, {cache: "no-store"})
+        ]);
+        const data = await response.json();
+        const platform = await platformResponse.json();
+        setText("youtube-configured", platformLabel(platform.youtube));
+        setText("youtube-missing-fields", missingFieldsLabel(platform.youtube));
+        setText("youtube-queue-total", data.queue_total);
+    } catch (error) {
+        setText("youtube-configured", "Error");
+        setText("youtube-missing-fields", "Missing fields: unavailable");
+    }
+}
+
+function getLeadPayload() {
+    return {
+        business_type: document.getElementById("lead-business").value.trim(),
+        target_customer: document.getElementById("lead-customer").value.trim(),
+        offer: document.getElementById("lead-offer").value.trim(),
+        pain_point: document.getElementById("lead-pain").value.trim(),
+        tone: document.getElementById("lead-tone").value.trim(),
+        platform: document.getElementById("lead-platform").value.trim()
+    };
+}
+
+async function createCampaignDraft() {
+    const platforms = Array.from(document.querySelectorAll("#campaign-platforms input:checked")).map(cb => cb.value);
+    const payload = {
+        title: document.getElementById("campaign-title").value.trim(),
+        goal: document.getElementById("campaign-goal").value.trim(),
+        offer: document.getElementById("campaign-offer").value.trim(),
+        audience: document.getElementById("campaign-audience").value.trim(),
+        platforms
+    };
+
+    try {
+        const response = await fetch("/api/campaign/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Campaign creation failed");
+            return;
+        }
+        addLog("Campaign draft created");
+        renderEmpireResult("Campaign Draft", data);
+    } catch (error) {
+        console.error(error);
+        alert("Connection error creating campaign");
+    }
+}
+
+async function draftLeadMessage() {
+    try {
+        const response = await fetch("/api/leads/draft-message", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(getLeadPayload())
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Lead draft failed");
+            return;
+        }
+        addLog("Lead message drafted");
+        renderEmpireResult("Lead Draft Preview", data);
+    } catch (error) {
+        console.error(error);
+        alert("Connection error drafting lead message");
+    }
+}
+
+async function saveLeadDraft() {
+    try {
+        const response = await fetch("/api/leads/save", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(getLeadPayload())
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Lead save failed");
+            return;
+        }
+        addLog("Lead draft saved");
+        renderEmpireResult("Saved Lead Draft", data);
+    } catch (error) {
+        console.error(error);
+        alert("Connection error saving lead draft");
+    }
+}
+
+async function showEmpireHistory() {
+    try {
+        const [campaignResponse, leadResponse] = await Promise.all([
+            fetch("/api/campaign/history"),
+            fetch("/api/leads/history")
+        ]);
+        const campaigns = await campaignResponse.json();
+        const leads = await leadResponse.json();
+        renderEmpireResult("Empire History", {campaigns, leads});
+        addLog("Empire history loaded");
+    } catch (error) {
+        console.error(error);
+        alert("Connection error loading Empire history");
+    }
+}
+
+function renderEmpireResult(title, data) {
+    const result = document.getElementById("empire-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = `${title} - manual_review`;
+    result.appendChild(header);
+
+    if (title === "Unified Approval Queue" && Array.isArray(data.items)) {
+        data.items.forEach(queueItem => result.appendChild(renderApprovalItem(queueItem)));
+        return;
+    }
+
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = JSON.stringify(data, null, 2);
+    item.appendChild(text);
+    result.appendChild(item);
+}
+
+function renderApprovalItem(queueItem) {
+    const item = document.createElement("div");
+    item.className = "preview-item";
+
+    const title = document.createElement("div");
+    title.className = "preview-title";
+    title.textContent = `${queueItem.source} / ${queueItem.platform} / ${queueItem.status}`;
+    item.appendChild(title);
+
+    const body = document.createElement("div");
+    body.className = "preview-text";
+    body.textContent = `${queueItem.title}\n\n${queueItem.body || ""}`;
+    item.appendChild(body);
+
+    const buttons = document.createElement("div");
+    buttons.className = "form-buttons";
+    buttons.style.marginTop = "0.75rem";
+
+    const approve = document.createElement("button");
+    approve.className = "btn primary";
+    approve.type = "button";
+    approve.textContent = "Approve";
+    approve.addEventListener("click", () => approvalAction("approve", queueItem));
+    buttons.appendChild(approve);
+
+    const reject = document.createElement("button");
+    reject.className = "btn";
+    reject.type = "button";
+    reject.textContent = "Reject";
+    reject.addEventListener("click", () => approvalAction("reject", queueItem));
+    buttons.appendChild(reject);
+
+    const edit = document.createElement("button");
+    edit.className = "btn";
+    edit.type = "button";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", () => editApprovalItem(queueItem));
+    buttons.appendChild(edit);
+
+    const exportPack = document.createElement("button");
+    exportPack.className = "btn";
+    exportPack.type = "button";
+    exportPack.textContent = "Export Pack";
+    exportPack.addEventListener("click", () => createExportPack(queueItem));
+    buttons.appendChild(exportPack);
+
+    if (canPublish(queueItem)) {
+        const publish = document.createElement("button");
+        publish.className = "btn primary";
+        publish.type = "button";
+        publish.textContent = "Publish";
+        publish.addEventListener("click", () => publishItem(queueItem));
+        buttons.appendChild(publish);
+    }
+
+    item.appendChild(buttons);
+    return item;
+}
+
+async function approvalAction(action, queueItem) {
+    try {
+        const response = await fetch(`/api/approval-queue/${action}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({source: queueItem.source, id: queueItem.id})
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || `${action} failed`);
+            return;
+        }
+        addLog(`${queueItem.source} item ${action}d`);
+        showApprovalQueue();
+    } catch (error) {
+        console.error(error);
+        alert(`${action} failed`);
+    }
+}
+
+async function editApprovalItem(queueItem) {
+    const title = prompt("Edit title", queueItem.title || "");
+    if (title === null) return;
+    const body = prompt("Edit body/copy/script", queueItem.body || "");
+    if (body === null) return;
+
+    try {
+        const response = await fetch("/api/approval-queue/update", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                source: queueItem.source,
+                id: queueItem.id,
+                updates: {
+                    title,
+                    body,
+                    caption: body,
+                    script: body
+                }
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Update failed");
+            return;
+        }
+        addLog(`${queueItem.source} item updated`);
+        showApprovalQueue();
+    } catch (error) {
+        console.error(error);
+        alert("Update failed");
+    }
+}
+
+async function createMetaDraft(platform) {
+    const endpoint = platform === "instagram"
+        ? "/api/meta/create-instagram-draft"
+        : "/api/meta/create-facebook-draft";
+    const payload = {
+        title: document.getElementById("campaign-title")?.value || "Meta Draft",
+        topic: document.getElementById("campaign-goal")?.value || "Orion empire update",
+        offer: document.getElementById("campaign-offer")?.value || "Orion execution sprint",
+        audience: document.getElementById("campaign-audience")?.value || "business owners"
+    };
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        const draft = await response.json();
+        const body = draft.post_text || draft.caption || "";
+        await fetch("/api/meta/queue-post", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                title: payload.title,
+                platform,
+                content_type: draft.content_type,
+                body
+            })
+        });
+        addLog(`${platform} draft queued`);
+        renderEmpireResult("Meta Draft Queued", draft);
+        refreshMetaStatus();
+    } catch (error) {
+        console.error(error);
+        alert("Meta draft failed");
+    }
+}
+
+async function showMetaQueue() {
+    try {
+        const response = await fetch("/api/meta/status");
+        const status = await response.json();
+        renderEmpireResult("Meta Queue Status", status);
+        addLog("Meta queue status loaded");
+    } catch (error) {
+        console.error(error);
+        alert("Meta queue failed");
+    }
+}
+
+async function createYouTubeDraft() {
+    const payload = {
+        title: document.getElementById("campaign-title")?.value || "YouTube Draft",
+        topic: document.getElementById("campaign-goal")?.value || "Orion empire update",
+        offer: document.getElementById("campaign-offer")?.value || "Orion execution sprint",
+        audience: document.getElementById("campaign-audience")?.value || "business owners",
+        video_type: "short"
+    };
+    try {
+        const response = await fetch("/api/youtube/create-video-draft", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) {
+            const message = await readErrorMessage(response, "YouTube draft failed");
+            alert(message);
+            addLog(message);
+            return;
+        }
+        const draft = await response.json();
+        const queueResponse = await fetch("/api/youtube/queue-upload-draft", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({draft})
+        });
+        if (!queueResponse.ok) {
+            const message = await readErrorMessage(queueResponse, "YouTube queue failed");
+            alert(message);
+            addLog(message);
+            return;
+        }
+        addLog("YouTube draft queued");
+        renderEmpireResult("YouTube Draft Queued", draft);
+        refreshYouTubeStatus();
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "YouTube draft failed");
+    }
+}
+
+async function showYouTubeQueue() {
+    try {
+        const response = await fetch("/api/youtube/status");
+        const status = await response.json();
+        renderEmpireResult("YouTube Queue Status", status);
+        addLog("YouTube queue status loaded");
+    } catch (error) {
+        console.error(error);
+        alert("YouTube queue failed");
+    }
+}
+
+async function startYouTubeOAuth() {
+    try {
+        const response = await fetch("/api/youtube/oauth-url");
+        const payload = await response.json();
+        renderEmpireResult("YouTube OAuth Start", {
+            redirect_uri: payload.redirect_uri,
+            state_saved: payload.state_saved,
+            auth_url_ready: Boolean(payload.auth_url)
+        });
+        if (response.ok && payload.auth_url) {
+            window.open(payload.auth_url, "_blank", "noopener,noreferrer");
+            addLog("YouTube OAuth opened");
+        } else {
+            addLog("YouTube OAuth URL failed");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("YouTube OAuth start failed");
+    }
+}
+
+async function exchangeYouTubeToken() {
+    try {
+        const response = await fetch("/api/youtube/exchange-token", {method: "POST"});
+        const status = await response.json();
+        renderEmpireResult("YouTube Token Exchange", status);
+        addLog(response.ok ? "YouTube refresh token saved" : "YouTube token exchange failed");
+        refreshYouTubeStatus();
+        refreshMetaStatus();
+    } catch (error) {
+        console.error(error);
+        alert("YouTube token exchange failed");
+    }
+}
+
+function youtubePublishPayload() {
+    return {
+        source: "youtube",
+        id: document.getElementById("youtube-publish-id").value.trim(),
+        title: document.getElementById("youtube-publish-title").value.trim(),
+        body: document.getElementById("youtube-publish-description").value.trim(),
+        video_path: document.getElementById("youtube-publish-video-path").value.trim(),
+        tags: document.getElementById("youtube-publish-tags").value
+            .split(",")
+            .map(tag => tag.trim())
+            .filter(Boolean)
+    };
+}
+
+async function submitYouTubePublish() {
+    const payload = youtubePublishPayload();
+    try {
+        const response = await fetch("/api/publish/youtube", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        const videoId = data.response?.platform_post_id || data.history?.response?.platform_post_id || data.item?.platform_publish_id || "";
+        renderEmpireResult(response.ok ? "YouTube Publish Success" : "YouTube Publish Failed", {
+            upload_status: response.ok ? "success" : "failed",
+            video_id: videoId,
+            message: response.ok ? "YouTube upload completed" : (data.error || "YouTube publish failed"),
+            publish_status: data.success === true ? "published" : "not published",
+            response: data
+        });
+        addLog(response.ok ? "YouTube publish success" : `YouTube publish failed: ${data.error || "backend error"}`);
+    } catch (error) {
+        console.error(error);
+        renderEmpireResult("YouTube Publish Failed", {
+            upload_status: "failed",
+            message: error.message || "YouTube publish failed"
+        });
+        addLog(`YouTube publish failed: ${error.message || "network error"}`);
+    }
+}
+
+async function showApprovalQueue() {
+    try {
+        const response = await fetch("/api/approval-queue");
+        const queue = await response.json();
+        renderEmpireResult("Unified Approval Queue", queue);
+        addLog(`Approval queue loaded: ${queue.total || 0} items`);
+    } catch (error) {
+        console.error(error);
+        alert("Approval queue failed");
+    }
+}
+
+async function showScheduler() {
+    try {
+        const response = await fetch("/api/scheduler/items");
+        const data = await response.json();
+        const items = [
+            ...((data.scheduled || []).map(item => ({...item, scheduler_bucket: "scheduled"}))),
+            ...((data.unscheduled || []).map(item => ({...item, scheduler_bucket: "unscheduled"})))
+        ];
+        renderSchedulerResult(items, data);
+        addLog(`Scheduler loaded: ${items.length} approved items`);
+    } catch (error) {
+        console.error(error);
+        alert("Scheduler failed");
+    }
+}
+
+function renderSchedulerResult(items, data) {
+    const result = document.getElementById("empire-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = `Manual Scheduler - ${data.total_scheduled || 0} scheduled / ${data.total_unscheduled || 0} unscheduled`;
+    result.appendChild(header);
+
+    if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No approved items ready to schedule.";
+        result.appendChild(empty);
+        return;
+    }
+
+    items.forEach(item => result.appendChild(renderSchedulerItem(item)));
+}
+
+function renderSchedulerItem(queueItem) {
+    const item = document.createElement("div");
+    item.className = "preview-item";
+
+    const title = document.createElement("div");
+    title.className = "preview-title";
+    title.textContent = `${queueItem.scheduler_bucket} / ${queueItem.source} / ${queueItem.platform}`;
+    item.appendChild(title);
+
+    const body = document.createElement("div");
+    body.className = "preview-text";
+    body.textContent = `${queueItem.title}\n${queueItem.scheduled_for ? `Scheduled: ${queueItem.scheduled_for}\n` : ""}\n${queueItem.body || ""}`;
+    item.appendChild(body);
+
+    const buttons = document.createElement("div");
+    buttons.className = "form-buttons";
+    buttons.style.marginTop = "0.75rem";
+
+    const schedule = document.createElement("button");
+    schedule.className = "btn primary";
+    schedule.type = "button";
+    schedule.textContent = "Schedule";
+    schedule.addEventListener("click", () => scheduleItem(queueItem));
+    buttons.appendChild(schedule);
+
+    const unschedule = document.createElement("button");
+    unschedule.className = "btn";
+    unschedule.type = "button";
+    unschedule.textContent = "Unschedule";
+    unschedule.addEventListener("click", () => schedulerAction("/api/scheduler/unschedule", queueItem));
+    buttons.appendChild(unschedule);
+
+    const complete = document.createElement("button");
+    complete.className = "btn";
+    complete.type = "button";
+    complete.textContent = "Complete";
+    complete.addEventListener("click", () => schedulerAction("/api/scheduler/mark-complete", queueItem));
+    buttons.appendChild(complete);
+
+    const exportPack = document.createElement("button");
+    exportPack.className = "btn";
+    exportPack.type = "button";
+    exportPack.textContent = "Export Pack";
+    exportPack.addEventListener("click", () => createExportPack(queueItem));
+    buttons.appendChild(exportPack);
+
+    if (canPublish(queueItem)) {
+        const publish = document.createElement("button");
+        publish.className = "btn primary";
+        publish.type = "button";
+        publish.textContent = "Publish";
+        publish.addEventListener("click", () => publishItem(queueItem));
+        buttons.appendChild(publish);
+    }
+
+    item.appendChild(buttons);
+    return item;
+}
+
+async function scheduleItem(queueItem) {
+    const scheduledFor = prompt("ISO datetime, example 2026-05-22T18:00:00", queueItem.scheduled_for || "");
+    if (scheduledFor === null) return;
+    await schedulerAction("/api/scheduler/schedule", queueItem, {scheduled_for: scheduledFor});
+}
+
+async function schedulerAction(endpoint, queueItem, extra = {}) {
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({source: queueItem.source, id: queueItem.id, ...extra})
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Scheduler action failed");
+            return;
+        }
+        addLog("Scheduler item updated");
+        showScheduler();
+    } catch (error) {
+        console.error(error);
+        alert("Scheduler action failed");
+    }
+}
+
+async function createExportPack(queueItem) {
+    try {
+        const response = await fetch("/api/export-pack/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({source: queueItem.source, id: queueItem.id})
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.error || "Export pack failed");
+            return;
+        }
+        renderExportPack(data);
+        addLog("Export pack created");
+    } catch (error) {
+        console.error(error);
+        alert("Export pack failed");
+    }
+}
+
+function renderRevenue(title, data) {
+    const result = document.getElementById("revenue-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = title;
+    result.appendChild(header);
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = JSON.stringify(data, null, 2);
+    item.appendChild(text);
+    result.appendChild(item);
+}
+
+async function revenuePost(route, payload, title) {
+    const response = await fetch(route, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || "Revenue action failed");
+        return;
+    }
+    renderRevenue(title, data);
+    addLog(title);
+}
+
+async function createRevenueOffer() {
+    await revenuePost("/api/revenue/create-offer", {
+        title: document.getElementById("rev-offer-title").value,
+        audience: document.getElementById("rev-offer-audience").value,
+        solution: document.getElementById("rev-offer-solution").value,
+        deliverables: document.getElementById("rev-offer-solution").value
+    }, "Offer Created");
+}
+
+async function createRevenueLead() {
+    await revenuePost("/api/revenue/create-lead", {
+        name: document.getElementById("rev-lead-name").value,
+        business: document.getElementById("rev-lead-business").value,
+        estimated_value: document.getElementById("rev-lead-value").value,
+        status: document.getElementById("rev-lead-status").value,
+        platform: document.getElementById("rev-lead-platform").value
+    }, "Lead Created");
+}
+
+async function createRevenueFollowup() {
+    await revenuePost("/api/revenue/create-followup", {
+        lead_id: document.getElementById("rev-followup-lead").value,
+        due_at: document.getElementById("rev-followup-due").value,
+        message: document.getElementById("rev-followup-message").value
+    }, "Follow-Up Created");
+}
+
+async function loadRevenueLeads() {
+    const data = await (await fetch("/api/revenue/leads")).json();
+    renderRevenue("Lead Pipeline", data);
+}
+
+async function loadRevenueFollowups() {
+    const data = await (await fetch("/api/revenue/followups")).json();
+    renderRevenue("Follow-Up Queue", data);
+}
+
+async function loadRevenueReport() {
+    const data = await (await fetch("/api/revenue/report")).json();
+    renderRevenue("Daily Revenue Report", data);
+}
+
+function renderDaily(title, data) {
+    const result = document.getElementById("daily-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = title;
+    result.appendChild(header);
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = JSON.stringify(data, null, 2);
+    item.appendChild(text);
+    result.appendChild(item);
+}
+
+async function dailyPost(route, payload, title) {
+    const response = await fetch(route, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || "Daily Ops action failed");
+        return;
+    }
+    renderDaily(title, data);
+    addLog(title);
+}
+
+async function createDailyTask() {
+    await dailyPost("/api/daily/create-task", {
+        title: document.getElementById("daily-task-title").value,
+        category: document.getElementById("daily-task-category").value,
+        priority: document.getElementById("daily-task-priority").value,
+        due_time: document.getElementById("daily-task-due").value
+    }, "Daily Task Added");
+}
+
+async function setDailyGoals() {
+    await dailyPost("/api/daily/set-content-goals", {
+        shorts_goal: document.getElementById("goal-shorts").value,
+        posts_goal: document.getElementById("goal-posts").value,
+        leads_goal: document.getElementById("goal-leads").value,
+        outreach_goal: document.getElementById("goal-outreach").value
+    }, "Daily Goals Set");
+}
+
+async function logDailyRevenue() {
+    await dailyPost("/api/daily/log-revenue", {
+        amount: document.getElementById("daily-revenue-amount").value,
+        source: document.getElementById("daily-revenue-source").value,
+        notes: document.getElementById("daily-revenue-notes").value
+    }, "Daily Revenue Logged");
+}
+
+async function loadDailyOps() {
+    const [tasks, goals, revenue] = await Promise.all([
+        fetch("/api/daily/tasks").then(r => r.json()),
+        fetch("/api/daily/content-goals").then(r => r.json()),
+        fetch("/api/daily/revenue-today").then(r => r.json())
+    ]);
+    renderDaily("Daily Ops Summary", {tasks, goals, revenue});
+}
+
+async function resetDailyOps() {
+    if (!confirm("Reset today's tasks?")) return;
+    await dailyPost("/api/daily/reset-day", {}, "Daily Tasks Reset");
+}
+
+function platformTopic() { return document.getElementById("platform-topic").value || "Orion platform update"; }
+function platformBody() { return document.getElementById("platform-body").value || "Manual review draft"; }
+function platformNiche() { return document.getElementById("platform-niche").value || "local business"; }
+function platformLocation() { return document.getElementById("platform-location").value || "local market"; }
+
+function platformPayload() {
+    return {
+        title: platformTopic(),
+        topic: platformTopic(),
+        description: platformBody(),
+        body: platformBody(),
+        niche: platformNiche(),
+        location: platformLocation(),
+        hashtags: ["#OrionInterface", "#OutlawAI", "#SoundSavageAI"]
+    };
+}
+
+function renderPlatform(title, data) {
+    const result = document.getElementById("platform-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = title;
+    result.appendChild(header);
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = JSON.stringify(data, null, 2);
+    item.appendChild(text);
+    result.appendChild(item);
+}
+
+async function platformPost(route, payload, title) {
+    const response = await fetch(route, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload)});
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || "Platform action failed");
+        return;
+    }
+    renderPlatform(title, data);
+    addLog(title);
+}
+
+async function loadMediaJobs() {
+    const data = await (await fetch("/api/media/jobs")).json();
+    renderPlatform("Media Jobs", data);
+}
+
+function canPublish(queueItem) {
+    return queueItem.status === "approved" || queueItem.review_status === "approved" || Boolean(queueItem.scheduled_for);
+}
+
+function publishEndpoint(queueItem) {
+    const platform = String(queueItem.platform || "").toLowerCase();
+    if (platform.includes("facebook")) return "/api/publish/facebook";
+    if (platform.includes("instagram")) return "/api/publish/instagram";
+    if (platform.includes("youtube")) return "/api/publish/youtube";
+    if (queueItem.content_type === "comment_reply_draft") return "/api/publish/comment-reply";
+    return "";
+}
+
+async function publishItem(queueItem) {
+    const endpoint = publishEndpoint(queueItem);
+    if (!endpoint) {
+        alert("No publish endpoint for this platform yet.");
+        return;
+    }
+    if (!confirm("Publish this approved item with the official platform API?")) return;
+    const payload = {source: queueItem.source, id: queueItem.id};
+    if (endpoint.includes("instagram")) {
+        const mediaUrl = prompt("Instagram requires a public image/video media_url");
+        if (!mediaUrl) return;
+        payload.media_url = mediaUrl;
+    }
+    if (endpoint.includes("youtube")) {
+        const videoPath = prompt("YouTube requires a local video_path");
+        if (!videoPath) return;
+        payload.video_path = videoPath;
+    }
+    if (endpoint.includes("comment-reply")) {
+        const commentId = prompt("Enter official platform comment_id");
+        if (!commentId) return;
+        payload.comment_id = commentId;
+    }
+    const response = await fetch(endpoint, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload)});
+    const data = await response.json();
+    renderEmpireResult(response.ok ? "Publish Success" : "Publish Failed", data);
+    addLog(response.ok ? "Publish success" : "Publish failed");
+}
+
+async function showPublishStatus() {
+    const [status, history] = await Promise.all([
+        fetch("/api/publish/status").then(r => r.json()),
+        fetch("/api/publish/history").then(r => r.json())
+    ]);
+    renderEmpireResult("Publish Status", {status, history});
+}
+
+function renderExportPack(pack) {
+    const result = document.getElementById("empire-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = `Export Pack - ${pack.platform}`;
+    result.appendChild(header);
+
+    [
+        ["Title", pack.title],
+        ["Caption/Body", pack.caption || pack.body],
+        ["Hashtags", (pack.hashtags || []).join(" ")],
+        ["CTA", pack.CTA],
+        ["Script", pack.script],
+        ["Thumbnail Prompt", pack.thumbnail_prompt],
+        ["Voiceover Prompt", pack.voiceover_prompt],
+        ["Avatar Prompt", pack.avatar_prompt],
+        ["Posting Notes", pack.posting_notes]
+    ].forEach(([label, value]) => {
+        const item = document.createElement("div");
+        item.className = "preview-item";
+        const title = document.createElement("div");
+        title.className = "preview-title";
+        title.textContent = label;
+        const text = document.createElement("div");
+        text.className = "preview-text";
+        text.textContent = value || "";
+        item.appendChild(title);
+        item.appendChild(text);
+        result.appendChild(item);
+    });
 }
 
 </script>

@@ -1,0 +1,83 @@
+{
+  "version": "1.0",
+  "drafts": [
+    {
+      "id": "5eb7ef4d-35c7-4a9a-8208-65e37cc0478a",
+      "title": "Test Post",
+      "content": "Orion Content Engine is live!",
+      "formatted": {
+        "tiktok": {
+          "platform": "tiktok",
+          "title": "TikTok",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 2200,
+          "is_truncated": false
+        },
+        "facebook": {
+          "platform": "facebook",
+          "title": "Facebook",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 63206,
+          "is_truncated": false
+        },
+        "youtube": {
+          "platform": "youtube",
+          "title": "YouTube",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 5000,
+          "is_truncated": false
+        }
+      },
+      "platforms": [
+        "tiktok",
+        "facebook",
+        "youtube"
+      ],
+      "created_at": "2026-05-22T07:25:58.272763",
+      "updated_at": "2026-05-22T07:25:58.272763",
+      "metadata": {}
+    },
+    {
+      "id": "39db69ce-b92a-464e-b4bc-2706d28f480a",
+      "title": "Test Post",
+      "content": "Orion Content Engine is live!",
+      "formatted": {
+        "tiktok": {
+          "platform": "tiktok",
+          "title": "TikTok",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 2200,
+          "is_truncated": false
+        },
+        "facebook": {
+          "platform": "facebook",
+          "title": "Facebook",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 63206,
+          "is_truncated": false
+        },
+        "youtube": {
+          "platform": "youtube",
+          "title": "YouTube",
+          "formatted_content": "Orion Content Engine is live!",
+          "char_count": 29,
+          "max_chars": 5000,
+          "is_truncated": false
+        }
+      },
+      "platforms": [
+        "tiktok",
+        "facebook",
+        "youtube"
+      ],
+      "created_at": "2026-05-22T07:29:58.495061",
+      "updated_at": "2026-05-22T07:29:58.495061",
+      "metadata": {}
+    }
+  ]
+}
