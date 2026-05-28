@@ -17,6 +17,49 @@ def _env(name):
     return os.getenv(name, "").strip()
 
 
+def _load_youtube_client_config():
+    secret_file = _env("YOUTUBE_CLIENT_SECRET_FILE")
+    if not secret_file:
+        return {}
+
+    path = Path(secret_file)
+    if not path.is_absolute():
+        path = Path(__file__).resolve().parent / path
+    if not path.exists():
+        return {}
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data.get("installed") or data.get("web") or {}
+
+
+def _youtube_publish_credentials():
+    client_config = _load_youtube_client_config()
+    client_id = _env("YOUTUBE_CLIENT_ID") or str(client_config.get("client_id") or "").strip()
+    client_secret = _env("YOUTUBE_CLIENT_SECRET") or str(client_config.get("client_secret") or "").strip()
+    refresh_token = _env("YOUTUBE_REFRESH_TOKEN")
+    channel_id = _env("YOUTUBE_CHANNEL_ID")
+    missing = []
+    if not client_id:
+        missing.append("YOUTUBE_CLIENT_ID")
+    if not client_secret:
+        missing.append("YOUTUBE_CLIENT_SECRET")
+    if not refresh_token:
+        missing.append("YOUTUBE_REFRESH_TOKEN")
+    if not channel_id:
+        missing.append("YOUTUBE_CHANNEL_ID")
+    return {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+        "channel_id": channel_id,
+        "missing": missing,
+        "client_secret_source": "env" if _env("YOUTUBE_CLIENT_SECRET") else "client_secret_file" if client_secret else "missing",
+    }
+
+
 def _ensure_history():
     os.makedirs(os.path.dirname(HISTORY_PATH), exist_ok=True)
     if not os.path.exists(HISTORY_PATH):
@@ -55,17 +98,20 @@ def save_publish_result(platform, source, item_id, success, response=None, error
 
 def publish_status():
     history = _read_history()["publishes"]
-    youtube_ready = bool(
-        _env("YOUTUBE_CLIENT_ID")
-        and _env("YOUTUBE_CHANNEL_ID")
-        and _env("YOUTUBE_CLIENT_SECRET_FILE")
-        and _env("YOUTUBE_REFRESH_TOKEN")
-    )
+    youtube_credentials = _youtube_publish_credentials()
+    youtube_missing = youtube_credentials["missing"]
+    youtube_ready = not youtube_missing
     return {
         "facebook_configured": bool(_env("META_ACCESS_TOKEN") and _env("FACEBOOK_PAGE_ID")),
         "instagram_configured": bool(_env("META_ACCESS_TOKEN") and _env("INSTAGRAM_BUSINESS_ID")),
         "youtube_configured": youtube_ready,
         "youtube_ready": youtube_ready,
+        "youtube_missing": youtube_missing,
+        "youtube_client_id_set": bool(youtube_credentials["client_id"]),
+        "youtube_client_secret_set": bool(youtube_credentials["client_secret"]),
+        "youtube_client_secret_source": youtube_credentials["client_secret_source"],
+        "youtube_refresh_token_set": bool(youtube_credentials["refresh_token"]),
+        "youtube_channel_id_set": bool(youtube_credentials["channel_id"]),
         "history_total": len(history),
     }
 
@@ -112,17 +158,15 @@ def publish_instagram(caption, media_url=None):
 
 
 def _youtube_access_token():
-    client_id = _env("YOUTUBE_CLIENT_ID")
-    client_secret = _env("YOUTUBE_CLIENT_SECRET")
-    refresh_token = _env("YOUTUBE_REFRESH_TOKEN")
-    if not client_id or not client_secret or not refresh_token:
-        raise RuntimeError("YouTube OAuth env vars missing")
+    credentials = _youtube_publish_credentials()
+    if credentials["missing"]:
+        raise RuntimeError(f"YouTube OAuth env vars missing: {', '.join(credentials['missing'])}")
     response = requests.post(
         GOOGLE_TOKEN_URL,
         data={
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "refresh_token": refresh_token,
+            "client_id": credentials["client_id"],
+            "client_secret": credentials["client_secret"],
+            "refresh_token": credentials["refresh_token"],
             "grant_type": "refresh_token",
         },
         timeout=30,
