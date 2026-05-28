@@ -18,6 +18,9 @@ ROUTES = [
     "/api/approval-queue",
     "/api/scheduler/items",
     "/api/export-pack/history",
+    "/api/runs",
+    "/api/voice/status",
+    "/api/voice/profiles",
 ]
 
 

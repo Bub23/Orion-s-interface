@@ -420,6 +420,62 @@
             gap: 0.6rem;
         }
 
+        .station-flow {
+            display: grid;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .station-card {
+            display: grid;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #0c0f14;
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--green);
+        }
+
+        .run-card {
+            border-left-color: var(--red);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            width: fit-content;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--line);
+            color: var(--steel);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+        }
+
+        .status-badge.finished,
+        .status-badge.approved {
+            color: var(--green);
+            border-color: rgba(53,208,127,.45);
+        }
+
+        .status-badge.failed {
+            color: var(--red);
+            border-color: rgba(225,25,49,.55);
+        }
+
+        .status-badge.running,
+        .status-badge.needs_approval {
+            color: var(--amber);
+            border-color: rgba(240,169,52,.45);
+        }
+
+        .output-box {
+            padding: 0.75rem;
+            background: #090b0f;
+            border: 1px solid var(--line);
+            color: var(--steel);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 0.86rem;
+        }
+
         .platform-checkbox {
             display: flex;
             align-items: center;
@@ -460,11 +516,57 @@
             overflow-y: auto;
         }
 
+        .approval-queue-container {
+            max-height: 62vh;
+            overflow-y: auto;
+            display: grid;
+            gap: 0.85rem;
+            padding-right: 0.25rem;
+        }
+
         .preview-item {
             padding: 1rem;
             background: #0c0f14;
             border: 1px solid var(--line);
             border-radius: 0;
+        }
+
+        .approval-card {
+            display: grid;
+            gap: 0.85rem;
+            border-left: 3px solid rgba(225,25,49,.78);
+        }
+
+        .approval-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 0.6rem;
+        }
+
+        .approval-field {
+            padding: 0.65rem;
+            background: #090b0f;
+            border: 1px solid rgba(39,45,54,.86);
+            min-width: 0;
+        }
+
+        .approval-field span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .approval-field strong {
+            display: block;
+            color: var(--text);
+            font-size: 0.86rem;
+            overflow-wrap: anywhere;
+        }
+
+        .approval-actions {
+            grid-template-columns: repeat(4,minmax(0,1fr));
         }
 
         .preview-title {
@@ -517,6 +619,13 @@
             padding: 3rem 1rem;
             text-align: center;
             color: var(--muted);
+        }
+
+        @media (max-width: 700px) {
+            .approval-meta-grid,
+            .approval-actions {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 1200px) {
@@ -660,15 +769,187 @@
             <div class="panel command-panel">
 
                 <div class="tabs">
-                    <button class="tab-button active" data-tab="console">Console</button>
+                    <button class="tab-button active" data-tab="home">Home</button>
+                    <button class="tab-button" data-tab="demo">Demo Mode</button>
+                    <button class="tab-button" data-tab="runs">Run Queue</button>
+                    <button class="tab-button" data-tab="remix">Remix Engine</button>
+                    <button class="tab-button" data-tab="voice">Voice Hunger</button>
                     <button class="tab-button" data-tab="content">Content Engine</button>
                     <button class="tab-button" data-tab="empire">Empire Ops</button>
                     <button class="tab-button" data-tab="revenue">Revenue</button>
                     <button class="tab-button" data-tab="daily">Daily Ops</button>
                     <button class="tab-button" data-tab="platform">Platform Operator</button>
+                    <button class="tab-button" data-tab="console">System Logs</button>
                 </div>
 
-                <div id="console-tab" class="tab-content active">
+                <div id="home-tab" class="tab-content active">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Home / War Room</h2>
+                        <p class="panel-subtitle">Run queue, approvals, remix, voice, and system readiness</p>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric"><span>Total Runs</span><strong id="home-total-runs">0</strong></div>
+                        <div class="metric"><span>Running Now</span><strong id="home-running-runs">0</strong></div>
+                        <div class="metric warning"><span>Needs Approval</span><strong id="home-approval-runs">0</strong></div>
+                        <div class="metric danger"><span>Failed Runs</span><strong id="home-failed-runs">0</strong></div>
+                        <div class="metric"><span>Voice Engine Status</span><strong id="home-voice-status">Checking</strong></div>
+                        <div class="metric"><span>Remix Engine Status</span><strong id="home-remix-status">Ready</strong></div>
+                    </div>
+                    <div class="station-flow">
+                        <div class="station-card">
+                            <div class="preview-title">Station Flow</div>
+                            <div class="preview-text">Run Queue -> Remix Engine -> Voice Hunger -> Content Queue -> Approvals -> Project Health -> System Logs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="demo-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Demo Mode</h2>
+                        <p class="panel-subtitle">Showroom-safe system proof. Read-only checks, draft-only handoffs, and approval-gated actions.</p>
+                    </div>
+                    <div class="station-flow">
+                        <div class="station-card">
+                            <div class="preview-title">Showroom Safety</div>
+                            <div class="preview-text">No autonomous customer contact. No fake calling. No live publish without approval. This demo proves local command-center readiness and produces manual-review handoff packs.</div>
+                            <div class="form-buttons">
+                                <button class="btn primary" type="button" id="demo-snapshot-btn">Run Demo Snapshot</button>
+                                <button class="btn" type="button" id="demo-zeus-btn">Show Zeus Handoff</button>
+                            </div>
+                        </div>
+                        <div id="demo-result" class="preview-section"></div>
+                    </div>
+                </div>
+
+                <div id="runs-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Run Queue</h2>
+                        <p class="panel-subtitle">Local JSON task runs with approval and remix actions</p>
+                    </div>
+                    <div class="content-form">
+                        <div class="platform-grid">
+                            <select class="form-input" id="run-type">
+                                <option value="content">content</option>
+                                <option value="song">song</option>
+                                <option value="hook">hook</option>
+                                <option value="caption">caption</option>
+                                <option value="short_script">short_script</option>
+                                <option value="youtube_title">youtube_title</option>
+                                <option value="remix">remix</option>
+                                <option value="voice">voice</option>
+                                <option value="mastering">mastering</option>
+                                <option value="upload_plan">upload_plan</option>
+                            </select>
+                            <input class="form-input" id="run-title" type="text" placeholder="Run title">
+                        </div>
+                        <textarea class="form-textarea" id="run-input" placeholder="Input text"></textarea>
+                        <div class="platform-grid">
+                            <input class="form-input" id="run-source-file" type="text" placeholder="Source file optional">
+                            <input class="form-input" id="run-platform" type="text" placeholder="Platform optional">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn primary" type="button" id="create-run-btn">Create Run</button>
+                            <button class="btn" type="button" id="refresh-runs-btn">Refresh Runs</button>
+                        </div>
+                    </div>
+                    <div id="runs-result" class="preview-section" style="display:none;"></div>
+                </div>
+
+                <div id="remix-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Remix Everything Engine</h2>
+                        <p class="panel-subtitle">Rewrite content for platform, style, and brand voice</p>
+                    </div>
+                    <div class="content-form">
+                        <textarea class="form-textarea" id="remix-text" placeholder="Original text"></textarea>
+                        <div class="platform-grid">
+                            <select class="form-input" id="remix-platform">
+                                <option value="youtube">youtube</option>
+                                <option value="youtube_shorts" selected>youtube_shorts</option>
+                                <option value="tiktok">tiktok</option>
+                                <option value="instagram">instagram</option>
+                                <option value="facebook">facebook</option>
+                                <option value="threads">threads</option>
+                                <option value="song_hook">song_hook</option>
+                                <option value="song_verse">song_verse</option>
+                                <option value="promo_post">promo_post</option>
+                                <option value="dm_offer">dm_offer</option>
+                            </select>
+                            <select class="form-input" id="remix-style">
+                                <option value="harder">harder</option>
+                                <option value="cleaner">cleaner</option>
+                                <option value="more_outlaw" selected>more_outlaw</option>
+                                <option value="more_emotional">more_emotional</option>
+                                <option value="more_sales_focused">more_sales_focused</option>
+                                <option value="shorter">shorter</option>
+                                <option value="longer">longer</option>
+                                <option value="more_viral">more_viral</option>
+                                <option value="more_country_rap">more_country_rap</option>
+                                <option value="more_storytelling">more_storytelling</option>
+                            </select>
+                        </div>
+                        <label class="form-label" for="remix-intensity">Intensity</label>
+                        <input id="remix-intensity" type="range" min="1" max="10" value="8">
+                        <input class="form-input" id="remix-brand-voice" type="text" value="Bub Outlaw / 304 Reaper">
+                        <button class="btn primary" type="button" id="generate-remix-btn">Generate Remix</button>
+                    </div>
+                    <div id="remix-result" class="preview-section" style="display:none;"></div>
+                </div>
+
+                <div id="voice-tab" class="tab-content">
+                    <div class="panel-head">
+                        <h2 class="panel-title">Voice Hunger / Voice Engine</h2>
+                        <p class="panel-subtitle">Bridge to local REAPER/RVC paths without fake voice completion</p>
+                    </div>
+                    <div class="content-form">
+                        <div id="voice-status-box" class="output-box">Checking voice engine...</div>
+                        <label class="form-label" for="voice-text">Voice Prompt</label>
+                        <textarea class="form-textarea" id="voice-text" placeholder="Text-only prompts use offline Windows SAPI, then local RVC."></textarea>
+                        <div class="platform-grid">
+                            <label class="form-label" for="voice-profile">Voice Profile</label>
+                            <select class="form-input" id="voice-profile">
+                                <option value="BUB_OUTLAW">BUB_OUTLAW</option>
+                                <option value="ORION">ORION</option>
+                                <option value="VALE">VALE</option>
+                                <option value="CUSTOM">CUSTOM</option>
+                            </select>
+                            <label class="form-label" for="voice-mode">Mode</label>
+                            <select class="form-input" id="voice-mode">
+                                <option value="clone">clone</option>
+                                <option value="convert">convert</option>
+                                <option value="narrate" selected>narrate</option>
+                                <option value="song_hook">song_hook</option>
+                                <option value="ad_libs">ad_libs</option>
+                                <option value="demo_vocal">demo_vocal</option>
+                                <option value="master_voice_output">master_voice_output</option>
+                            </select>
+                            <label class="form-label" for="voice-pitch">Pitch</label>
+                            <input class="form-input" id="voice-pitch" type="number" value="0" min="-24" max="24" step="1">
+                            <label class="form-label" for="voice-output-format">Output Format</label>
+                            <select class="form-input" id="voice-output-format">
+                                <option value="WAV" selected>WAV</option>
+                                <option value="MP3">MP3</option>
+                                <option value="FLAC">FLAC</option>
+                                <option value="OGG">OGG</option>
+                                <option value="M4A">M4A</option>
+                            </select>
+                        </div>
+                        <label class="form-label" for="voice-reference">Optional Source WAV Path</label>
+                        <input class="form-input" id="voice-reference" type="text" placeholder="C:\REAPER_LAB\OUTPUTS\...\source.wav">
+                        <label class="platform-checkbox"><input type="checkbox" id="voice-master-output"><span>Master output after voice run</span></label>
+                        <div class="form-buttons">
+                            <button class="btn primary" type="button" id="voice-run-btn">Generate Voice Run</button>
+                            <button class="btn" type="button" id="voice-refresh-btn">Refresh Voice Status</button>
+                        </div>
+                    </div>
+                    <div id="voice-result" class="preview-section" style="display:none;"></div>
+                    <div class="panel-head compact-head">
+                        <h3 class="panel-title">Recent Voice Runs</h3>
+                    </div>
+                    <div id="voice-recent-runs" class="preview-section"></div>
+                </div>
+
+                <div id="console-tab" class="tab-content">
                     <div class="panel-head">
                         <h2 class="panel-title">Command Console</h2>
                         <p class="panel-subtitle">Real AI routing + local context injection</p>
@@ -1168,6 +1449,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("po-reply-draft").addEventListener("click", () => platformPost("/api/platform/comments/create-reply-draft", {customer_message: platformBody(), offer: platformTopic(), platform: "manual"}, "Reply Draft"));
     document.getElementById("po-target-list").addEventListener("click", () => platformPost("/api/leads/generate-target-list", {niche: platformNiche(), location: platformLocation(), platform: "manual"}, "Lead Targets"));
     document.getElementById("po-outreach").addEventListener("click", () => platformPost("/api/leads/create-outreach-sequence", {niche: platformNiche(), offer: platformTopic()}, "Outreach Sequence"));
+    document.getElementById("create-run-btn").addEventListener("click", createRun);
+    document.getElementById("refresh-runs-btn").addEventListener("click", loadRuns);
+    document.getElementById("generate-remix-btn").addEventListener("click", generateRemix);
+    document.getElementById("voice-run-btn").addEventListener("click", createVoiceRun);
+    document.getElementById("voice-refresh-btn").addEventListener("click", refreshVoiceStatus);
+    document.getElementById("demo-snapshot-btn").addEventListener("click", runDemoSnapshot);
+    document.getElementById("demo-zeus-btn").addEventListener("click", showZeusHandoff);
+    refreshWarRoom();
+    loadRuns();
+    refreshVoiceStatus();
+    showZeusHandoff();
 });
 
 async function refreshStatus() {
@@ -1495,6 +1787,440 @@ function switchTab(tabName) {
     if (activeTab) {
         activeTab.classList.add("active");
     }
+
+    if (tabName === "home") refreshWarRoom();
+    if (tabName === "runs") loadRuns();
+    if (tabName === "voice") refreshVoiceStatus();
+    if (tabName === "demo") showZeusHandoff();
+}
+
+async function refreshWarRoom() {
+    try {
+        const [runsResponse, voiceResponse] = await Promise.all([
+            fetch("/api/runs"),
+            fetch("/api/voice/status")
+        ]);
+        const runs = await runsResponse.json();
+        const voice = await voiceResponse.json();
+        const counts = runs.counts || {};
+        setText("home-total-runs", runs.total || 0);
+        setText("home-running-runs", counts.running || 0);
+        setText("home-approval-runs", counts.needs_approval || 0);
+        setText("home-failed-runs", counts.failed || 0);
+        setText("home-voice-status", voice.message || "Unknown");
+        setText("home-remix-status", "Ready");
+    } catch (error) {
+        console.error(error);
+        setText("home-voice-status", "Status error");
+    }
+}
+
+function renderDemoMode(title, data) {
+    const result = document.getElementById("demo-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "form-label";
+    header.textContent = title;
+    result.appendChild(header);
+
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = JSON.stringify(data, null, 2);
+    item.appendChild(text);
+    result.appendChild(item);
+}
+
+async function runDemoSnapshot() {
+    const endpoints = {
+        app_status: "/api/status",
+        runs: "/api/runs",
+        voice: "/api/voice/status",
+        publish: "/api/publish/status",
+        platform: "/api/platform/full-status"
+    };
+    const snapshot = {
+        mode: "showroom_demo",
+        safety: "Read-only status check. Customer contact and live publish remain approval-gated.",
+        results: {}
+    };
+
+    await Promise.all(Object.entries(endpoints).map(async ([key, route]) => {
+        try {
+            const response = await fetch(route);
+            snapshot.results[key] = {
+                ok: response.ok,
+                status: response.status,
+                data: await response.json()
+            };
+        } catch (error) {
+            snapshot.results[key] = {
+                ok: false,
+                error: error.message || "request failed"
+            };
+        }
+    }));
+
+    renderDemoMode("Demo Snapshot", snapshot);
+    addLog("Demo snapshot loaded");
+}
+
+function showZeusHandoff() {
+    renderDemoMode("Zeus / Automation Handoff", {
+        handoff_status: "approval_only",
+        available_now: [
+            "Prompt/export pack preparation",
+            "Approval queue review",
+            "Manual scheduler review",
+            "Draft-only customer and platform actions"
+        ],
+        not_claimed: [
+            "No autonomous customer calling",
+            "No autonomous customer contact",
+            "No live platform publish without explicit approval"
+        ],
+        next_operator_step: "Use approval queue or export packs, then review manually before any outside action."
+    });
+    addLog("Zeus handoff displayed");
+}
+
+async function createRun() {
+    const payload = {
+        type: document.getElementById("run-type").value,
+        title: document.getElementById("run-title").value,
+        input_text: document.getElementById("run-input").value,
+        source_file: document.getElementById("run-source-file").value,
+        platform: document.getElementById("run-platform").value
+    };
+    const response = await fetch("/api/runs", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || "Run create failed");
+        return;
+    }
+    addLog(`Run created: ${data.run_id}`);
+    loadRuns();
+    refreshWarRoom();
+}
+
+async function loadRuns() {
+    try {
+        const response = await fetch("/api/runs");
+        const data = await response.json();
+        const result = document.getElementById("runs-result");
+        result.style.display = "grid";
+        result.innerHTML = "";
+
+        if (!data.runs || data.runs.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = "No runs found";
+            result.appendChild(empty);
+            refreshWarRoom();
+            return;
+        }
+
+        data.runs.forEach(run => result.appendChild(renderRunCard(run)));
+        renderRecentVoiceRuns(data.runs || []);
+        refreshWarRoom();
+    } catch (error) {
+        console.error(error);
+        alert("Run queue failed");
+    }
+}
+
+function renderRunCard(run) {
+    const card = document.createElement("div");
+    card.className = "preview-item run-card";
+
+    const title = document.createElement("div");
+    title.className = "preview-title";
+    title.textContent = `${run.type} / ${run.title || "Untitled"}`;
+    card.appendChild(title);
+
+    const body = document.createElement("div");
+    body.className = "preview-text";
+    body.textContent = `Run ID: ${run.run_id}\nStatus: ${run.status}\nPlatform: ${run.platform || "Not set"}\nCreated: ${run.created_at}\nUpdated: ${run.updated_at}\n\nInput:\n${run.input_text || ""}\n\nOutput:\n${run.output_text || ""}${run.error_message ? `\n\nError:\n${run.error_message}` : ""}`;
+    card.appendChild(body);
+
+    const badge = document.createElement("span");
+    badge.className = `status-badge ${run.status}`;
+    badge.textContent = run.status;
+    card.appendChild(badge);
+
+    const buttons = document.createElement("div");
+    buttons.className = "form-buttons";
+
+    if (run.status === "needs_approval" || run.status === "finished") {
+        buttons.appendChild(runButton("Approve", "primary", () => runAction(run.run_id, "approve")));
+    }
+
+    buttons.appendChild(runButton("Remix", "", () => remixRun(run)));
+
+    if (run.output_file) {
+        buttons.appendChild(runButton("Open Output", "", () => alert(run.output_file)));
+    }
+
+    if (run.status === "failed") {
+        buttons.appendChild(runButton("Retry Failed", "primary", () => runAction(run.run_id, "start")));
+    }
+
+    card.appendChild(buttons);
+    return card;
+}
+
+function runButton(label, variant, handler) {
+    const button = document.createElement("button");
+    button.className = `btn ${variant || ""}`.trim();
+    button.type = "button";
+    button.textContent = label;
+    button.addEventListener("click", handler);
+    return button;
+}
+
+async function runAction(runId, action) {
+    const response = await fetch(`/api/runs/${runId}/${action}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({})
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || `Run ${action} failed`);
+        return;
+    }
+    addLog(`Run ${action}: ${runId}`);
+    loadRuns();
+}
+
+async function remixRun(run) {
+    const response = await fetch(`/api/runs/${run.run_id}/remix`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            platform: run.platform || "youtube_shorts",
+            style: "more_outlaw",
+            intensity: 7,
+            brand_voice: "Bub Outlaw / 304 Reaper"
+        })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.error || "Run remix failed");
+        return;
+    }
+    addLog(`Run remixed: ${data.run_id}`);
+    loadRuns();
+}
+
+async function generateRemix() {
+    const response = await fetch("/api/remix", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            text: document.getElementById("remix-text").value,
+            platform: document.getElementById("remix-platform").value,
+            style: document.getElementById("remix-style").value,
+            intensity: document.getElementById("remix-intensity").value,
+            brand_voice: document.getElementById("remix-brand-voice").value
+        })
+    });
+    const data = await response.json();
+    const result = document.getElementById("remix-result");
+    result.style.display = "grid";
+    result.innerHTML = "";
+    if (!response.ok) {
+        result.textContent = data.error || "Remix failed";
+        return;
+    }
+    const item = document.createElement("div");
+    item.className = "preview-item";
+    item.innerHTML = `<div class="preview-title">Run ${data.run_id} / ${data.status}</div>`;
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = data.output;
+    item.appendChild(text);
+    result.appendChild(item);
+    addLog(`Remix finished: ${data.run_id}`);
+    loadRuns();
+}
+
+async function refreshVoiceStatus() {
+    try {
+        const response = await fetch("/api/voice/status");
+        const status = await response.json();
+        const pathLines = (status.paths || []).map(item => `${item.exists ? "FOUND" : "MISSING"} ${item.path}`).join("\n");
+        document.getElementById("voice-status-box").textContent = `${status.message}\nScript path set: ${status.script_path_set ? "YES" : "NO"}\nScript exists: ${status.script_exists ? "YES" : "NO"}\n${pathLines}`;
+        refreshWarRoom();
+    } catch (error) {
+        console.error(error);
+        document.getElementById("voice-status-box").textContent = "Voice status error";
+    }
+}
+
+async function createVoiceRun() {
+    const result = document.getElementById("voice-result");
+    result.style.display = "grid";
+    result.textContent = "Generating local voice run...";
+    const response = await fetch("/api/voice/run", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            voice_profile: document.getElementById("voice-profile").value,
+            mode: document.getElementById("voice-mode").value,
+            audio_input_path: document.getElementById("voice-reference").value,
+            reference_audio_path: document.getElementById("voice-reference").value,
+            text: document.getElementById("voice-text").value,
+            pitch: Number(document.getElementById("voice-pitch").value || 0),
+            output_format: document.getElementById("voice-output-format").value,
+            master_output: document.getElementById("voice-master-output").checked
+        })
+    });
+    const data = await response.json();
+    result.style.display = "grid";
+    result.innerHTML = "";
+    if (!response.ok) {
+        result.textContent = data.error || "Voice run failed";
+        return;
+    }
+    result.appendChild(renderVoiceRunResult(data));
+    addLog(`Voice run created: ${data.run_id}`);
+    loadRuns();
+}
+
+function getVoiceRunMeta(run) {
+    let bridge = {};
+    try {
+        bridge = JSON.parse(run.output_text || "{}");
+    } catch (error) {
+        bridge = {message: run.output_text || ""};
+    }
+    const parsed = bridge.parsed_json || {};
+    const generator = parsed.generator || {};
+    return {
+        bridge,
+        parsed,
+        generator,
+        ttsMode: generator.tts_mode || parsed.tts_mode || "",
+        sourceAudio: generator.source_audio_path || parsed.source_audio_path || "",
+        rvcOutput: generator.output_rvc_path || parsed.output_rvc_path || "",
+        audioFile: bridge.audio_file || parsed.audio_file || "",
+        message: bridge.message || parsed.message || run.error_message || "",
+    };
+}
+
+function renderVoiceRunResult(run) {
+    const card = document.createElement("div");
+    card.className = "preview-item run-card";
+
+    const title = document.createElement("div");
+    title.className = "preview-title";
+    title.textContent = `Voice Run / ${run.status}`;
+    card.appendChild(title);
+
+    const meta = getVoiceRunMeta(run);
+    const bridge = meta.bridge;
+
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = [
+        `Run ID: ${run.run_id}`,
+        `Status: ${run.status}`,
+        `Bridge Status: ${bridge.bridge_status || "unknown"}`,
+        `Message: ${meta.message}`,
+        `Request File: ${bridge.request_file || ""}`,
+        `Output Dir: ${bridge.output_dir || ""}`,
+        `TTS Mode: ${meta.ttsMode}`,
+        `Source Audio: ${meta.sourceAudio}`,
+        `RVC Output: ${meta.rvcOutput}`,
+        `Audio File: ${meta.audioFile || "Not created"}`,
+        `Return Code: ${bridge.return_code ?? ""}`,
+        `STDERR: ${bridge.stderr || ""}`
+    ].join("\n");
+    card.appendChild(text);
+
+    const badge = document.createElement("span");
+    badge.className = `status-badge ${run.status}`;
+    badge.textContent = run.status;
+    card.appendChild(badge);
+
+    if (meta.audioFile) {
+        const buttons = document.createElement("div");
+        buttons.className = "form-buttons";
+        buttons.appendChild(runButton("Copy Audio Path", "primary", () => copyText(meta.audioFile)));
+        const playbackUrl = voiceOutputUrl(meta.audioFile);
+        if (playbackUrl) {
+            const audio = document.createElement("audio");
+            audio.controls = true;
+            audio.src = playbackUrl;
+            audio.className = "voice-audio";
+            buttons.appendChild(audio);
+        }
+        card.appendChild(buttons);
+    }
+
+    return card;
+}
+
+function renderRecentVoiceRuns(runs) {
+    const result = document.getElementById("voice-recent-runs");
+    if (!result) return;
+    result.innerHTML = "";
+    const voiceRuns = runs.filter(run => run.type === "voice").slice(0, 6);
+    if (voiceRuns.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No recent voice runs";
+        result.appendChild(empty);
+        return;
+    }
+    voiceRuns.forEach(run => result.appendChild(renderVoiceRecentCard(run)));
+}
+
+function renderVoiceRecentCard(run) {
+    const card = document.createElement("div");
+    card.className = "preview-item run-card";
+    const meta = getVoiceRunMeta(run);
+    const title = document.createElement("div");
+    title.className = "preview-title";
+    title.textContent = `${run.status} / ${run.title || run.run_id}`;
+    card.appendChild(title);
+    const text = document.createElement("div");
+    text.className = "preview-text";
+    text.textContent = [
+        `Status: ${run.status}`,
+        `TTS Mode: ${meta.ttsMode}`,
+        `Message: ${meta.message}`,
+        `Audio File: ${meta.audioFile || "Not created"}`
+    ].join("\n");
+    card.appendChild(text);
+    if (meta.audioFile) {
+        const buttons = document.createElement("div");
+        buttons.className = "form-buttons";
+        buttons.appendChild(runButton("Copy Audio Path", "", () => copyText(meta.audioFile)));
+        card.appendChild(buttons);
+    }
+    return card;
+}
+
+function copyText(value) {
+    navigator.clipboard.writeText(value).then(
+        () => addLog("Audio path copied"),
+        () => alert(value)
+    );
+}
+
+function voiceOutputUrl(path) {
+    const root = "C:\\REAPER_LAB\\OUTPUTS\\";
+    if (!path || !path.startsWith(root)) return "";
+    return `/api/voice/output/${encodeURIComponent(path.slice(root.length)).replaceAll("%5C", "/")}`;
 }
 
 async function createContentDraft() {
@@ -1818,8 +2544,8 @@ function renderEmpireResult(title, data) {
     header.textContent = `${title} - manual_review`;
     result.appendChild(header);
 
-    if (title === "Unified Approval Queue" && Array.isArray(data.items)) {
-        data.items.forEach(queueItem => result.appendChild(renderApprovalItem(queueItem)));
+    if (title === "Unified Approval Queue") {
+        renderApprovalQueueResult(result, data);
         return;
     }
 
@@ -1832,23 +2558,88 @@ function renderEmpireResult(title, data) {
     result.appendChild(item);
 }
 
+function renderApprovalQueueResult(result, data) {
+    const responseItems = Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data?.queue)
+            ? data.queue
+            : [];
+
+    const controls = document.createElement("div");
+    controls.className = "form-buttons";
+
+    const count = document.createElement("div");
+    count.className = "preview-stats";
+    count.textContent = `Fetched ${responseItems.length} queue items from /api/approval-queue`;
+    controls.appendChild(count);
+
+    const refresh = document.createElement("button");
+    refresh.className = "btn";
+    refresh.type = "button";
+    refresh.textContent = "Refresh";
+    refresh.addEventListener("click", showApprovalQueue);
+    controls.appendChild(refresh);
+    result.appendChild(controls);
+
+    if (!responseItems.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No queue items found";
+        result.appendChild(empty);
+        return;
+    }
+
+    const container = document.createElement("div");
+    container.className = "approval-queue-container";
+    responseItems.forEach(queueItem => container.appendChild(renderApprovalItem(queueItem)));
+    result.appendChild(container);
+}
+
 function renderApprovalItem(queueItem) {
     const item = document.createElement("div");
-    item.className = "preview-item";
+    item.className = "preview-item approval-card";
 
     const title = document.createElement("div");
     title.className = "preview-title";
-    title.textContent = `${queueItem.source} / ${queueItem.platform} / ${queueItem.status}`;
+    title.textContent = queueItem.title || "Untitled queue item";
     item.appendChild(title);
+
+    const fields = document.createElement("div");
+    fields.className = "approval-meta-grid";
+
+    [
+        ["Queue Item ID", queueItem.id],
+        ["Platform", queueItem.platform],
+        ["Title", queueItem.title],
+        ["Status", queueItem.status],
+        ["Review Status", queueItem.review_status],
+        ["Created Time", queueItem.created_at],
+        ["Source", queueItem.source],
+        ["Content Type", queueItem.content_type]
+    ].forEach(([label, value]) => {
+        const field = document.createElement("div");
+        field.className = "approval-field";
+
+        const labelElement = document.createElement("span");
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("strong");
+        valueElement.textContent = value || "Not set";
+
+        field.appendChild(labelElement);
+        field.appendChild(valueElement);
+        fields.appendChild(field);
+    });
+
+    item.appendChild(fields);
 
     const body = document.createElement("div");
     body.className = "preview-text";
-    body.textContent = `${queueItem.title}\n\n${queueItem.body || ""}`;
+    body.textContent = queueItem.body || "";
     item.appendChild(body);
 
     const buttons = document.createElement("div");
-    buttons.className = "form-buttons";
-    buttons.style.marginTop = "0.75rem";
+    buttons.className = "form-buttons approval-actions";
 
     const approve = document.createElement("button");
     approve.className = "btn primary";
@@ -2128,8 +2919,13 @@ async function showApprovalQueue() {
     try {
         const response = await fetch("/api/approval-queue");
         const queue = await response.json();
+        if (!response.ok) {
+            alert(queue.error || "Approval queue failed");
+            return;
+        }
+        const items = Array.isArray(queue.items) ? queue.items : [];
         renderEmpireResult("Unified Approval Queue", queue);
-        addLog(`Approval queue loaded: ${queue.total || 0} items`);
+        addLog(`Approval queue loaded: ${items.length} items`);
     } catch (error) {
         console.error(error);
         alert("Approval queue failed");

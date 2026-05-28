@@ -70,7 +70,9 @@ def _read_json(path, default):
 
 
 def _write_json(path, data):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    directory = os.path.dirname(path)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
     with open(path, "w", encoding="utf-8") as json_file:
         json.dump(data, json_file, indent=2)
 

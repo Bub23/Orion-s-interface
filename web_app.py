@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -6,6 +6,7 @@ import logging
 import platform
 import sys
 from datetime import datetime
+from pathlib import Path
 import psutil
 import requests
 import json
@@ -71,6 +72,7 @@ from publish_layer import (
     publish_youtube,
     publish_comment_reply,
 )
+from run_engine import RunStore, RemixService, VoiceBridge
 
 try:
     import GPUtil
@@ -91,6 +93,9 @@ content_engine = ContentEngine()
 campaign_engine = CampaignDraftEngine()
 lead_engine = LeadDraftEngine()
 empire_queue = EmpireQueueEngine()
+run_store = RunStore()
+remix_service = RemixService(run_store)
+voice_bridge = VoiceBridge(run_store)
 EXPORT_PACK_PATH = "data/export_pack_history.json"
 OAUTH_CALLBACK_PATH = "data/oauth_callback.json"
 
@@ -130,6 +135,9 @@ NOISY_ROUTES = {
     "/api/daily/revenue-today",
     "/api/publish/status",
     "/api/publish/history",
+    "/api/runs",
+    "/api/voice/status",
+    "/api/voice/profiles",
 }
 
 orion_system_prompt = """
@@ -525,6 +533,141 @@ def gpu_metrics():
             "status": "error",
             "message": str(error)
         }), 500
+
+
+@app.route("/api/runs", methods=["GET"])
+def runs_list():
+    runs = run_store.list_runs()
+    counts = {}
+    for run in runs:
+        counts[run.get("status", "unknown")] = counts.get(run.get("status", "unknown"), 0) + 1
+    return jsonify({
+        "total": len(runs),
+        "counts": counts,
+        "runs": runs,
+    })
+
+
+@app.route("/api/runs", methods=["POST"])
+def runs_create():
+    try:
+        payload = request.get_json(silent=True) or {}
+        run = run_store.create_run(payload)
+        return jsonify(run), 201
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
+    except Exception as error:
+        logger.exception("Run create failed")
+        return jsonify({"error": str(error)}), 500
+
+
+@app.route("/api/runs/<run_id>", methods=["GET"])
+def runs_get(run_id):
+    run = run_store.get_run(run_id)
+    if not run:
+        return jsonify({"error": "Run not found"}), 404
+    return jsonify(run)
+
+
+@app.route("/api/runs/<run_id>/start", methods=["POST"])
+def runs_start(run_id):
+    run = run_store.get_run(run_id)
+    if not run:
+        return jsonify({"error": "Run not found"}), 404
+    output = run.get("output_text") or run.get("input_text") or ""
+    status = "needs_approval" if output else "running"
+    updated = run_store.update_run(run_id, {"status": status, "output_text": output})
+    return jsonify(updated)
+
+
+@app.route("/api/runs/<run_id>/approve", methods=["POST"])
+def runs_approve(run_id):
+    updated = run_store.update_run(run_id, {"status": "approved", "error_message": ""})
+    if not updated:
+        return jsonify({"error": "Run not found"}), 404
+    return jsonify(updated)
+
+
+@app.route("/api/runs/<run_id>/fail", methods=["POST"])
+def runs_fail(run_id):
+    payload = request.get_json(silent=True) or {}
+    updated = run_store.update_run(run_id, {
+        "status": "failed",
+        "error_message": str(payload.get("error_message") or "Run marked failed").strip(),
+    })
+    if not updated:
+        return jsonify({"error": "Run not found"}), 404
+    return jsonify(updated)
+
+
+@app.route("/api/runs/<run_id>/remix", methods=["POST"])
+def runs_remix(run_id):
+    source_run = run_store.get_run(run_id)
+    if not source_run:
+        return jsonify({"error": "Run not found"}), 404
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = remix_service.remix_run(
+            source_run,
+            platform=str(payload.get("platform") or "").strip(),
+            style=str(payload.get("style") or "more_viral").strip(),
+            intensity=payload.get("intensity", 6),
+            brand_voice=str(payload.get("brand_voice") or "").strip(),
+        )
+        return jsonify(result), 201
+    except Exception as error:
+        logger.exception("Run remix failed")
+        return jsonify({"error": str(error)}), 400
+
+
+@app.route("/api/remix", methods=["POST"])
+def remix_create():
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = remix_service.remix(
+            text=payload.get("text") or payload.get("original_text") or "",
+            platform=str(payload.get("platform") or "youtube_shorts").strip(),
+            style=str(payload.get("style") or "more_viral").strip(),
+            intensity=payload.get("intensity", 5),
+            brand_voice=str(payload.get("brand_voice") or "").strip(),
+        )
+        return jsonify(result), 201
+    except Exception as error:
+        logger.exception("Remix failed")
+        return jsonify({"error": str(error)}), 400
+
+
+@app.route("/api/voice/status", methods=["GET"])
+def voice_status():
+    return jsonify(voice_bridge.status())
+
+
+@app.route("/api/voice/profiles", methods=["GET"])
+def voice_profiles():
+    return jsonify(voice_bridge.profiles())
+
+
+@app.route("/api/voice/run", methods=["POST"])
+def voice_run():
+    try:
+        run = voice_bridge.run(request.get_json(silent=True) or {})
+        return jsonify(run), 201
+    except Exception as error:
+        logger.exception("Voice run failed")
+        return jsonify({"error": str(error)}), 500
+
+
+@app.route("/api/voice/output/<path:relative_path>", methods=["GET"])
+def voice_output_file(relative_path):
+    outputs_root = Path(r"C:\REAPER_LAB\OUTPUTS").resolve()
+    requested = (outputs_root / relative_path).resolve()
+    try:
+        requested.relative_to(outputs_root)
+    except ValueError:
+        return jsonify({"error": "voice output path not allowed"}), 403
+    if not requested.is_file():
+        return jsonify({"error": "voice output file not found"}), 404
+    return send_file(requested)
 
 
 @app.route("/api/chat", methods=["POST"])
