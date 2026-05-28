@@ -148,6 +148,14 @@ Rules:
 - Never invent system stats.
 - Use only available API/status/metrics context when discussing system health.
 - If CPU, RAM, disk, GPU, network, Docker, or app status is not provided, say it is not currently instrumented.
+- Observed operational data must be reported exactly as provided.
+- Do not rename IDs, replace UUIDs with numbered IDs, invent queue items, invent titles, invent statuses, invent analytics, invent file paths, or invent completion claims.
+- For operational tables, use exact raw values from API context.
+- If a field is missing, write "missing".
+- If a statement is inferred, label it "INFERRED".
+- If a statement is a recommendation, label it "PROPOSED".
+- Do not claim a draft, upload, publish, update, or token exchange succeeded unless a real route/API response says it succeeded.
+- If the needed data is not present in context, ask for the missing input instead of guessing.
 - Help build Orion, Sound Savage AI, Truth Exposed AI, music systems, automation, and infrastructure.
 - No fake dates. No fake capabilities. No fake logs.
 - Keep answers practical and action-ready.
@@ -189,6 +197,62 @@ def get_platform_full_status():
             "INSTAGRAM_BUSINESS_ID",
         ]),
     }
+
+
+def get_exact_youtube_queue_context():
+    queue = get_youtube_status().get("queue", [])
+    exact_items = []
+    for item in queue:
+        exact_items.append({
+            "id": item.get("id", "missing"),
+            "title": item.get("title", "missing"),
+            "status": item.get("status", "missing"),
+            "approved": item.get("approved", "missing"),
+            "review_status": item.get("review_status", "missing"),
+            "publish_error": item.get("publish_error", "missing"),
+            "created_at": item.get("created_at", "missing"),
+            "updated_at": item.get("updated_at", "missing"),
+        })
+    return {
+        "contract": "Use these exact raw values. Do not renumber IDs or rewrite titles.",
+        "items": exact_items,
+    }
+
+
+def is_youtube_queue_review_prompt(message):
+    normalized = message.lower()
+    return (
+        "youtube" in normalized
+        and "queue" in normalized
+        and any(term in normalized for term in ["review", "list", "show", "summarize", "table"])
+    )
+
+
+def render_exact_youtube_queue_review():
+    queue_context = get_exact_youtube_queue_context()
+    items = queue_context["items"]
+    if not items:
+        return "No YouTube queue items found."
+
+    columns = [
+        "id",
+        "title",
+        "status",
+        "approved",
+        "review_status",
+        "publish_error",
+        "created_at",
+        "updated_at",
+    ]
+    lines = [
+        "YouTube Queue Review",
+        "",
+        "| " + " | ".join(columns) + " |",
+        "| " + " | ".join(["---"] * len(columns)) + " |",
+    ]
+    for item in items:
+        lines.append("| " + " | ".join(str(item.get(column, "missing")) for column in columns) + " |")
+    return "\n".join(lines)
 
 
 def _save_oauth_callback_result(result):
@@ -681,6 +745,13 @@ def api_chat():
                 "error": "Message is required."
             }), 400
 
+        if is_youtube_queue_review_prompt(message):
+            return jsonify({
+                "response": render_exact_youtube_queue_review(),
+                "provider": "local_exact",
+                "model": "deterministic_queue_renderer"
+            })
+
         status_context = {
             "status": {
                 "app": "Orion Interface",
@@ -697,7 +768,8 @@ def api_chat():
                 "server": "running"
             },
             "system_metrics": get_system_metrics_payload(),
-            "memory": get_memory_status()
+            "memory": get_memory_status(),
+            "youtube_queue_exact": get_exact_youtube_queue_context()
         }
 
         context_text = str(status_context)

@@ -22,7 +22,7 @@ print("=" * 70)
 # Import Flask app
 print("\n[1] Importing Flask app...")
 try:
-    from web_app import app
+    from web_app import app, get_exact_youtube_queue_context
     print("    ✓ Flask app imported successfully")
 except Exception as e:
     print(f"    ✗ Import failed: {e}")
@@ -273,6 +273,43 @@ try:
     print(f"    ✓ /api/leads/history: {client.get('/api/leads/history').status_code}")
 except Exception as e:
     print(f"    ✗ Empire Ops route test failed: {e}")
+    sys.exit(1)
+
+# Test 11: Anti-fabrication queue grounding
+print("\n[13] Testing YouTube queue grounding preserves raw IDs...")
+try:
+    queue_context = get_exact_youtube_queue_context()
+    items = queue_context.get("items", [])
+    if items:
+        first = items[0]
+        for field in [
+            "id",
+            "title",
+            "status",
+            "approved",
+            "review_status",
+            "publish_error",
+            "created_at",
+            "updated_at",
+        ]:
+            assert field in first
+        assert not str(first["id"]).isdigit()
+        print(f"    ✓ Exact queue ID preserved: {first['id']}")
+        print(f"    ✓ Exact queue title preserved: {first['title']}")
+        response = client.post("/api/chat", json={
+            "message": "Review the YouTube queue as an operational table."
+        })
+        assert response.status_code == 200
+        chat = response.get_json()
+        assert chat["provider"] == "local_exact"
+        assert first["id"] in chat["response"]
+        assert first["title"] in chat["response"]
+        assert "| 1 |" not in chat["response"]
+        print("    ✓ Chat queue review preserves exact UUIDs and titles")
+    else:
+        print("    ✓ No YouTube queue items present; grounding context returned an empty exact list")
+except Exception as e:
+    print(f"    ✗ YouTube queue grounding test failed: {e}")
     sys.exit(1)
 
 print("\n" + "=" * 70)
